@@ -62,21 +62,21 @@ function HomePage() {
                 </button>
                 <div className="flex gap-4">
                   <a 
-                    href="https://github.com" 
+                    href="https://github.com/mid9t" 
                     className="p-3 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
                     aria-label="GitHub Profile"
                   >
                     <Github className="w-5 h-5" />
                   </a>
                   <a 
-                    href="https://linkedin.com" 
+                    href="https://linkedin.com/kakury/" 
                     className="p-3 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
                     aria-label="LinkedIn Profile"
                   >
                     <Linkedin className="w-5 h-5" />
                   </a>
                   <a 
-                    href="mailto:your@email.com" 
+                    href="mailto:kakuryu@berkeley.edu" 
                     className="p-3 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
                     aria-label="Email Contact"
                   >
@@ -115,17 +115,17 @@ function HomePage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
               {
-                title: 'AI Research Platform',
+                title: 'Query Decomposition for Multi AI Agents',
                 description: 'Machine learning framework for real-time data analysis',
                 image: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&q=80'
               },
               {
-                title: 'E-commerce Dashboard',
+                title: 'Financial Forecasting Dashboard',
                 description: 'Real-time analytics and inventory management system',
                 image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80'
               },
               {
-                title: 'Social Media App',
+                title: 'Faulty Commit Classifier: Enhancing Code Quality with Machine Learning',
                 description: 'Modern social platform with real-time messaging',
                 image: 'https://images.unsplash.com/photo-1432888622747-4eb9a8efeb07?auto=format&fit=crop&w=800&q=80'
               }

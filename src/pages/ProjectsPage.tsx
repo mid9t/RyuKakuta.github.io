@@ -4,36 +4,36 @@ import { ArrowLeft, Github, ExternalLink } from 'lucide-react';
 
 const projects = [
   {
-    title: 'AI Research Platform',
+    title: 'Query Decomposition for Multi AI Agents',
     description: 'Machine learning framework for real-time data analysis',
     image: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&q=80',
     challenge: 'Developing a scalable architecture that could handle real-time processing of large datasets while maintaining low latency.',
     solution: 'Implemented a microservices architecture using Docker and Kubernetes, with Redis for caching and Apache Kafka for stream processing.',
     impact: 'Reduced data processing time by 60% and improved system reliability to 99.9% uptime.',
-    tech: ['Python', 'TensorFlow', 'Docker', 'Kubernetes', 'Redis', 'Kafka'],
-    github: 'https://github.com',
+    tech: ['Python', 'LangChain', 'Docker', 'Kubernetes', 'Redis', 'Kafka'],
+    github: 'https://github.com/XayHanmonty/NeuroParallel.ai',
     demo: 'https://demo.com'
   },
   {
-    title: 'E-commerce Dashboard',
+    title: 'Financial Forecasting Dashboard',
     description: 'Real-time analytics and inventory management system',
     image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80',
     challenge: 'Creating a unified dashboard that could handle multiple data sources and provide real-time insights.',
     solution: 'Built a React-based dashboard with GraphQL for efficient data fetching and WebSocket for real-time updates.',
     impact: 'Increased inventory turnover by 40% and reduced stockouts by 75%.',
     tech: ['React', 'GraphQL', 'Node.js', 'PostgreSQL', 'WebSocket', 'Docker'],
-    github: 'https://github.com',
+    github: 'https://github.com/mid9t/CryptoForecast',
     demo: 'https://demo.com'
   },
   {
-    title: 'Social Media App',
+    title: 'Faulty Commit Classifier: Enhancing Code Quality with Machine Learning',
     description: 'Modern social platform with real-time messaging',
     image: 'https://images.unsplash.com/photo-1432888622747-4eb9a8efeb07?auto=format&fit=crop&w=800&q=80',
     challenge: 'Building a scalable real-time messaging system that could handle millions of concurrent users.',
     solution: 'Implemented a microservices architecture with WebSocket for real-time communication and Redis for message queuing.',
     impact: 'Achieved sub-100ms message delivery times and scaled to support 1M+ concurrent users.',
     tech: ['React Native', 'Node.js', 'WebSocket', 'Redis', 'MongoDB', 'AWS'],
-    github: 'https://github.com',
+    github: 'https://github.com/mid9t/FaultyCommitsDetection',
     demo: 'https://demo.com'
   }
 ];
