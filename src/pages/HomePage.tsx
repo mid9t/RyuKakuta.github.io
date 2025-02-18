@@ -69,7 +69,7 @@ function HomePage() {
                     <Github className="w-5 h-5" />
                   </a>
                   <a 
-                    href="https://linkedin.com/kakury/" 
+                    href="https://linkedin.com/in/kakury/" 
                     className="p-3 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
                     aria-label="LinkedIn Profile"
                   >
