@@ -1,11 +1,11 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { ArrowLeft, Github, ExternalLink } from 'lucide-react';
 
 const projects = [
   {
-    title: 'Query Decomposition for Multi AI Agents',
-    description: 'Machine learning framework for real-time data analysis',
+    title: 'NeuralPallale.ai',
+    description: 'NeuralPallale.ai is an orchestration platform that employs specialized AI agents to break down, distribute, and execute complex tasks.s',
     image: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&q=80',
     challenge: 'Developing a scalable architecture that could handle real-time processing of large datasets while maintaining low latency.',
     solution: 'Implemented a microservices architecture using Docker and Kubernetes, with Redis for caching and Apache Kafka for stream processing.',
@@ -39,6 +39,17 @@ const projects = [
 ];
 
 function ProjectsPage() {
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.hash) {
+      const element = document.querySelector(location.hash);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  }, [location]);
+
   return (
     <div className="pt-24 pb-12 px-4">
       <div className="max-w-6xl mx-auto">
@@ -54,7 +65,11 @@ function ProjectsPage() {
         
         <div className="space-y-24">
           {projects.map((project, index) => (
-            <article key={index} className="grid md:grid-cols-2 gap-12">
+            <article key={index} id={
+              index === 0 ? 'neural-parallel' :
+              index === 1 ? 'financial-forecast' :
+              'faulty-commit'
+            } className="grid md:grid-cols-2 gap-12">
               <div className="relative group">
                 <div className="absolute inset-0 bg-gradient-to-tr from-blue-500/20 to-purple-500/20 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity" />
                 <img

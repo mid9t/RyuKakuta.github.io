@@ -115,19 +115,22 @@ function HomePage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
               {
-                title: 'Query Decomposition for Multi AI Agents',
-                description: 'Machine learning framework for real-time data analysis',
-                image: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&q=80'
+                title: 'NeuralPallale.ai',
+                description: 'NeuralPallale.ai is an orchestration platform that employs specialized AI agents to break down, distribute, and execute complex tasks.',
+                image: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&q=80',
+                id: 'neural-parallel'
               },
               {
                 title: 'Financial Forecasting Dashboard',
-                description: 'Real-time analytics and inventory management system',
-                image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80'
+                description: 'Interactive web app to fetch and visualize real-time financial data (stocks/crypto) with user-adjustable parameters and intuitive charts. ',
+                image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80',
+                id: 'financial-forecast'
               },
               {
                 title: 'Faulty Commit Classifier: Enhancing Code Quality with Machine Learning',
                 description: 'Modern social platform with real-time messaging',
-                image: 'https://images.unsplash.com/photo-1432888622747-4eb9a8efeb07?auto=format&fit=crop&w=800&q=80'
+                image: 'https://images.unsplash.com/photo-1432888622747-4eb9a8efeb07?auto=format&fit=crop&w=800&q=80',
+                id: 'faulty-commit'
               }
             ].map((project, index) => (
               <article 
@@ -149,7 +152,7 @@ function HomePage() {
                     {project.description}
                   </p>
                   <button
-                    onClick={() => navigate('/projects')}
+                    onClick={() => navigate(`/projects#${project.id}`)}
                     className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 transition-colors group/link"
                     aria-label={`View ${project.title} details`}
                   >
