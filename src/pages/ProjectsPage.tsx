@@ -10,20 +10,9 @@ const projects = [
     challenge: 'Developing a scalable architecture that could handle real-time processing of large datasets while maintaining low latency.',
     solution: 'Implemented a microservices architecture using Docker and Kubernetes, with Redis for caching and Apache Kafka for stream processing.',
     impact: 'Reduced data processing time by 60% and improved system reliability to 99.9% uptime.',
-    tech: ['Python', 'LangChain', 'Docker', 'Kubernetes', 'Redis', 'Kafka'],
+    tech: ['Python', 'LangChain', 'ChromaDB', '', 'Redis', 'Kafka'],
     github: 'https://github.com/XayHanmonty/NeuroParallel.ai',
-    demo: 'https://demo.com'
-  },
-  {
-    title: 'Financial Forecasting Dashboard',
-    description: 'Real-time analytics and inventory management system',
-    image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80',
-    challenge: 'Creating a unified dashboard that could handle multiple data sources and provide real-time insights.',
-    solution: 'Built a React-based dashboard with GraphQL for efficient data fetching and WebSocket for real-time updates.',
-    impact: 'Increased inventory turnover by 40% and reduced stockouts by 75%.',
-    tech: ['React', 'GraphQL', 'Node.js', 'PostgreSQL', 'WebSocket', 'Docker'],
-    github: 'https://github.com/mid9t/CryptoForecast',
-    demo: 'https://demo.com'
+    demo: 'https://youtu.be/F8wy_Tchb3o'
   },
   {
     title: 'Faulty Commit Classifier: Enhancing Code Quality with Machine Learning',
@@ -33,9 +22,20 @@ const projects = [
     solution: 'Implemented a microservices architecture with WebSocket for real-time communication and Redis for message queuing.',
     impact: 'Achieved sub-100ms message delivery times and scaled to support 1M+ concurrent users.',
     tech: ['React Native', 'Node.js', 'WebSocket', 'Redis', 'MongoDB', 'AWS'],
-    github: 'https://github.com/mid9t/FaultyCommitsDetection',
+    github: 'https://github.com/mid9t/ViT_AutoMaskedEncoder/blob/main/Vit_and_AutoMaskedEncoder.ipynb',
     demo: 'https://demo.com'
-  }
+  },
+  {
+    title: 'Vision Transformer and Masked Auto Encoder',
+    description: 'Real-time analytics and inventory management system',
+    image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80',
+    challenge: 'Creating a unified dashboard that could handle multiple data sources and provide real-time insights.',
+    solution: 'Built a React-based dashboard with GraphQL for efficient data fetching and WebSocket for real-time updates.',
+    impact: 'Increased inventory turnover by 40% and reduced stockouts by 75%.',
+    tech: ['React', 'GraphQL', 'Node.js', 'PostgreSQL', 'WebSocket', 'Docker'],
+    github: 'https://github.com/mid9t/CryptoForecast',
+    demo: 'https://demo.com'
+  },
 ];
 
 function ProjectsPage() {
@@ -45,7 +45,17 @@ function ProjectsPage() {
     if (location.hash) {
       const element = document.querySelector(location.hash);
       if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
+        // Add a small delay to ensure smooth scrolling after navigation
+        setTimeout(() => {
+          const headerOffset = 96; // Adjust this value based on your header height
+          const elementPosition = element.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+          
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+          });
+        }, 100);
       }
     }
   }, [location]);
@@ -67,8 +77,8 @@ function ProjectsPage() {
           {projects.map((project, index) => (
             <article key={index} id={
               index === 0 ? 'neural-parallel' :
-              index === 1 ? 'financial-forecast' :
-              'faulty-commit'
+              index === 1 ? 'faulty-commit' :
+              'vit-and-masked-autoencoder'
             } className="grid md:grid-cols-2 gap-12">
               <div className="relative group">
                 <div className="absolute inset-0 bg-gradient-to-tr from-blue-500/20 to-purple-500/20 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity" />

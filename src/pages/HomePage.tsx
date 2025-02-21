@@ -121,16 +121,16 @@ function HomePage() {
                 id: 'neural-parallel'
               },
               {
-                title: 'Financial Forecasting Dashboard',
-                description: 'Interactive web app to fetch and visualize real-time financial data (stocks/crypto) with user-adjustable parameters and intuitive charts. ',
-                image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80',
-                id: 'financial-forecast'
-              },
-              {
                 title: 'Faulty Commit Classifier: Enhancing Code Quality with Machine Learning',
                 description: 'Modern social platform with real-time messaging',
                 image: 'https://images.unsplash.com/photo-1432888622747-4eb9a8efeb07?auto=format&fit=crop&w=800&q=80',
                 id: 'faulty-commit'
+              },
+              {
+                title: 'Vision Transformer and Masked Auto Encoder',
+                description: 'Interactive web app to fetch and visualize real-time financial data (stocks/crypto) with user-adjustable parameters and intuitive charts. ',
+                image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80',
+                id: 'vit-and-masked-autoencoder'
               }
             ].map((project, index) => (
               <article 
