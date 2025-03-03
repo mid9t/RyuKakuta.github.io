@@ -5,24 +5,24 @@ import { ArrowLeft, Github, ExternalLink } from 'lucide-react';
 const projects = [
   {
     title: 'NeuralPallale.ai',
-    description: 'NeuralPallale.ai is an orchestration platform that employs specialized AI agents to break down, distribute, and execute complex tasks.s',
+    description: 'NeuralPallale.ai is an orchestration platform that employs specialized AI agents to break down, distribute, and execute complex tasks.',
     image: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&q=80',
     challenge: 'Developing a scalable architecture that could handle real-time processing of large datasets while maintaining low latency.',
     solution: 'Implemented a microservices architecture using Docker and Kubernetes, with Redis for caching and Apache Kafka for stream processing.',
     impact: 'Reduced data processing time by 60% and improved system reliability to 99.9% uptime.',
-    tech: ['Python', 'LangChain', 'ChromaDB', '', 'Redis', 'Kafka'],
+    tech: ['Python', 'LangChain', 'ChromaDB'],
     github: 'https://github.com/XayHanmonty/NeuroParallel.ai',
     demo: 'https://youtu.be/F8wy_Tchb3o'
   },
   {
     title: 'Faulty Commit Classifier: Enhancing Code Quality with Machine Learning',
-    description: 'Modern social platform with real-time messaging',
+    description: 'This project involves the implementation of an end-to-end Machine Learning (ML) pipeline to detect faulty commits in software development.',
     image: 'https://images.unsplash.com/photo-1432888622747-4eb9a8efeb07?auto=format&fit=crop&w=800&q=80',
-    challenge: 'Building a scalable real-time messaging system that could handle millions of concurrent users.',
-    solution: 'Implemented a microservices architecture with WebSocket for real-time communication and Redis for message queuing.',
-    impact: 'Achieved sub-100ms message delivery times and scaled to support 1M+ concurrent users.',
-    tech: ['React Native', 'Node.js', 'WebSocket', 'Redis', 'MongoDB', 'AWS'],
-    github: 'https://github.com/mid9t/ViT_AutoMaskedEncoder/blob/main/Vit_and_AutoMaskedEncoder.ipynb',
+    challenge: 'The primary obstacles are: Handling Imbalanced Data, Data Preprocessing, Model Performance.',
+    solution: 'Data Preprocessing: Implement a data loader and preprocessor to clean and prepare the dataset for modeling, including handling missing values and normalizing features. Modeling: Develop a simple model (SingleLayerNN), which will be trained on the preprocessed data. The model will be evaluated based on its accuracy in detecting faulty commits. Offline Evaluation: After training, the model will be evaluated on a test set using metrics such as Precision-Recall curves and Average Precision (AP). Improvements and Optimization: Using the results from the initial model, efforts will be made to enhance the model by trying more complex architectures.',
+    impact: 'The model processed data at 34,700 rows/sec —significantly outperforming benchmark by over 600%— and reduced training loss to 0.191; enhanced model architecture boosted test average precision by 35%',
+    tech: ['Python', 'PyTorch', 'Scikit-learn', 'Redis', 'MongoDB', 'AWS'],
+    github: 'https://github.com/mid9t/FaultyCommitsDetection',
     demo: 'https://demo.com'
   },
   {
@@ -33,7 +33,7 @@ const projects = [
     solution: 'Built a React-based dashboard with GraphQL for efficient data fetching and WebSocket for real-time updates.',
     impact: 'Increased inventory turnover by 40% and reduced stockouts by 75%.',
     tech: ['React', 'GraphQL', 'Node.js', 'PostgreSQL', 'WebSocket', 'Docker'],
-    github: 'https://github.com/mid9t/CryptoForecast',
+    github: 'https://github.com/mid9t/ViT_AutoMaskedEncoder/blob/main/Vit_and_AutoMaskedEncoder.ipynb',
     demo: 'https://demo.com'
   },
 ];
