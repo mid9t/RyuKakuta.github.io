@@ -27,7 +27,7 @@ const projects = [
   },
   {
     title: 'Vision Transformer and Masked Auto Encoder',
-    description: 'Real-time analytics and inventory management system',
+    description: 'Transformer-based image classification pipeline on CIFAR10',
     image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80',
     challenge: 'Creating a unified dashboard that could handle multiple data sources and provide real-time insights.',
     solution: 'Built a React-based dashboard with GraphQL for efficient data fetching and WebSocket for real-time updates.',
