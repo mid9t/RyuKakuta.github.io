@@ -43,14 +43,17 @@ function HomePage() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div className="space-y-8 transform transition-all duration-700 translate-y-0">
               <h2 className="text-5xl font-bold leading-tight">
-                Building{' '}
+                I approach challenges from multiple perspectives to uncover their underlying causes,{' '}
                 <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                  Digital Experiences
+                  ensuring that my data-driven solutions address real-world issues and contribute to social progress.
                 </span>
               </h2>
               <p className="text-xl text-gray-600 dark:text-gray-400 leading-relaxed">
-                Full-stack developer specializing in creating innovative and accessible web solutions 
-                that push the boundaries of user experience.
+                Born and raised in Japan and studying in the US, I have learned that data can be interpreted in myriad ways by different entities. 
+                This insight has shaped my approach: I define complex challenges by examining them from diverse perspectives—a skill honed through personal hardships. 
+                I believe that understanding the multi-dimensional nature of a problem is the key to developing robust, data-driven solutions that remain cohesive across varied contexts. 
+                By combining rigorous technical analysis with a steadfast commitment to social contribution, I strive to design innovative strategies that address real-world issues and improve people's lives. 
+                My interdisciplinary approach, drawing insights from fields such as economics and psychology, enables me to craft solutions that are both technically sound and socially responsible.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <button 
