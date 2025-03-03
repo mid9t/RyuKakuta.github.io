@@ -122,13 +122,13 @@ function HomePage() {
               },
               {
                 title: 'Faulty Commit Classifier: Enhancing Code Quality with Machine Learning',
-                description: 'Modern social platform with real-time messaging',
+                description: 'An end-to-end machine learning pipeline for faulty commit classification',
                 image: 'https://images.unsplash.com/photo-1432888622747-4eb9a8efeb07?auto=format&fit=crop&w=800&q=80',
                 id: 'faulty-commit'
               },
               {
                 title: 'Vision Transformer and Masked Auto Encoder',
-                description: 'Interactive web app to fetch and visualize real-time financial data (stocks/crypto) with user-adjustable parameters and intuitive charts. ',
+                description: 'Transformer-based image classification pipeline on CIFAR10',
                 image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80',
                 id: 'vit-and-masked-autoencoder'
               }
