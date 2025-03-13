@@ -9,7 +9,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 export default defineConfig({
-  base: '/RyuKakuta.github.io/',
+  base: './',
   plugins: [
     react(),
     runtimeErrorOverlay(),
@@ -22,7 +22,7 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: resolve(__dirname, "docs"),
+    outDir: resolve(__dirname, "build"),
     emptyOutDir: true,
   },
 });
