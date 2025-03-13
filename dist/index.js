@@ -25,7 +25,7 @@ import { dirname, resolve } from "path";
 var __filename = fileURLToPath(import.meta.url);
 var __dirname = dirname(__filename);
 var vite_config_default = defineConfig({
-  base: "./",
+  base: "",
   plugins: [
     react(),
     runtimeErrorOverlay(),
@@ -38,7 +38,7 @@ var vite_config_default = defineConfig({
     }
   },
   build: {
-    outDir: resolve(__dirname, "build"),
+    outDir: resolve(__dirname, "dist"),
     emptyOutDir: true
   }
 });
