@@ -7,7 +7,7 @@ export default function Footer() {
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="mb-4 md:mb-0 text-sm text-muted-foreground">
-            <p>© Copyright 2023 Ishikaa Lunawat. Powered by Jekyll with al-folio theme. Hosted by GitHub Pages. Photos from Unsplash.</p>
+            <p>© Copyright 2025 Ryu Kakuta. Powered by Replit. Hosted by GitHub Pages.</p>
           </div>
           
           <div className="flex space-x-6">
