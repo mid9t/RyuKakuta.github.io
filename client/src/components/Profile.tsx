@@ -71,7 +71,7 @@ export default function Profile() {
           <div className="bg-card p-2 rounded-lg shadow-md h-full">
             <AspectRatio ratio={4/5} className="overflow-hidden rounded">
               <img 
-                src="/images/profile.jpeg" 
+                src="/RyuKakuta.github.io/images/profile.jpeg" 
                 alt="Ryu Kakuta" 
                 className="object-cover w-full h-full"
               />
