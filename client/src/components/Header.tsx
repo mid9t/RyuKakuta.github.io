@@ -11,22 +11,22 @@ export default function Header() {
         <nav>
           <ul className="flex space-x-6">
             <li>
-              <Link href="/RyuKakuta.github.io/" className="text-primary hover:text-opacity-80 transition">
+              <Link href="/" className="text-primary hover:text-opacity-80 transition">
                 About
               </Link>
             </li>
             <li>
-              <Link href="/RyuKakuta.github.io/publications" className="hover:text-primary transition">
+              <Link href="/publications" className="hover:text-primary transition">
                 Publications
               </Link>
             </li>
             <li>
-              <Link href="/RyuKakuta.github.io/projects" className="hover:text-primary transition">
+              <Link href="/projects" className="hover:text-primary transition">
                 Projects
               </Link>
             </li>
             <li>
-              <Link href="/RyuKakuta.github.io/cv" className="hover:text-primary transition">
+              <Link href="/cv" className="hover:text-primary transition">
                 CV
               </Link>
             </li>
