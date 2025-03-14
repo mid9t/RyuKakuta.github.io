@@ -39,7 +39,12 @@ var vite_config_default = defineConfig({
   },
   build: {
     outDir: resolve(__dirname, "dist"),
-    emptyOutDir: true
+    emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        manualChunks: void 0
+      }
+    }
   }
 });
 
