@@ -9,7 +9,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 export default defineConfig({
-  base: '/RyuKakuta.github.io/',
+  base: process.env.NODE_ENV === 'production' ? '/RyuKakuta.github.io/' : '/',
   plugins: [
     react(),
     runtimeErrorOverlay(),
@@ -34,4 +34,6 @@ export default defineConfig({
     outDir: path.resolve(__dirname, "dist/public"),
     emptyOutDir: true,
   },
+  assetsInclude: ['**/*.jpeg', '**/*.jpg', '**/*.png', '**/*.gif', '**/*.svg'],
+  publicDir: path.resolve(__dirname, "public"),
 });
