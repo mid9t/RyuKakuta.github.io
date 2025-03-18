@@ -1,6 +1,9 @@
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 export default function Profile() {
+  // Get the base URL from Vite's environment variables
+  const baseUrl = import.meta.env.BASE_URL;
+
   return (
     <section className="mb-12">
       <div className="flex flex-col md:flex-row gap-8">
@@ -76,7 +79,7 @@ export default function Profile() {
           <div className="bg-card p-2 rounded-lg shadow-md h-full">
             <AspectRatio ratio={4/5} className="overflow-hidden rounded">
               <img 
-                src="/images/profile.jpeg" 
+                src={`${baseUrl}images/profile.jpeg`}
                 alt="Profile Picture" 
                 className="object-cover w-full h-full"
               />

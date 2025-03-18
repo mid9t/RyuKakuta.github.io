@@ -7,7 +7,8 @@ import { useState } from "react";
 export default function Header() {
   const [location] = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  
+  const baseUrl = import.meta.env.BASE_URL;
+
   const toggleMobileMenu = () => {
     setMobileMenuOpen(prev => !prev);
   };
@@ -25,7 +26,7 @@ export default function Header() {
         <div className="flex items-center gap-3">
           <Link href="/" className="flex items-center gap-2">
             <img 
-              src="/images/profile.jpeg" 
+              src={`${baseUrl}images/profile.jpeg`} 
               alt="Ryu Kakuta" 
               className="h-10 w-10 rounded-full object-cover border-2 border-primary"
             />
