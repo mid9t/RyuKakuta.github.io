@@ -12,14 +12,14 @@ export default function Footer() {
           
           <div className="flex space-x-6">
             <a 
-              href="mailto:example@stanford.edu" 
+              href="mailto:kakuryu@berkeley.edu" 
               className="text-foreground hover:text-primary transition" 
               aria-label="Email"
             >
               <MailIcon className="h-5 w-5" />
             </a>
             <a 
-              href="https://github.com/" 
+              href="https://github.com/mid9t" 
               target="_blank" 
               rel="noopener noreferrer" 
               className="text-foreground hover:text-primary transition" 
@@ -28,7 +28,7 @@ export default function Footer() {
               <FaGithub className="h-5 w-5" />
             </a>
             <a 
-              href="https://linkedin.com/" 
+              href="https://linkedin.com/in/kakury/" 
               target="_blank" 
               rel="noopener noreferrer" 
               className="text-foreground hover:text-primary transition" 

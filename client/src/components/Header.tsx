@@ -25,11 +25,11 @@ export default function Header() {
         <div className="flex items-center gap-3">
           <Link href="/" className="flex items-center gap-2">
             <img 
-              src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
-              alt="Ishikaa Lunawat" 
+              src="/images/profile.jpeg" 
+              alt="Ryu Kakuta" 
               className="h-10 w-10 rounded-full object-cover border-2 border-primary"
             />
-            <span className="font-bold text-lg hidden sm:inline-block">Ishikaa Lunawat</span>
+            <span className="font-bold text-lg hidden sm:inline-block">Ryu Kakuta</span>
           </Link>
         </div>
         

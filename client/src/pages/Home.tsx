@@ -49,7 +49,7 @@ export default function Home() {
             </div>
           </Link>
           
-          <a href="mailto:example@stanford.edu">
+          <a href="mailto:kakuryu@berkeley.edu">
             <div className="bg-card hover:bg-primary/10 transition-colors p-6 rounded-lg shadow-md cursor-pointer flex gap-4 items-center">
               <div className="p-3 bg-primary/10 rounded-md">
                 <MailIcon className="text-primary h-6 w-6" />
@@ -76,11 +76,11 @@ export default function Home() {
               />
             </div>
             <div className="md:w-2/3">
-              <h3 className="text-xl font-bold mb-2">Learning Generalizable 3D Scene Representations for 6DoF Grasping</h3>
+              <h3 className="text-xl font-bold mb-2">...Coming soon...</h3>
               <p className="text-sm mb-4">
-                This research explores novel approaches to learning generalizable 3D scene representations for robotic grasping tasks. By combining geometric and semantic features, our method creates robust representations that work well across different environments and object categories.
+                ...Coming soon...
               </p>
-              <p className="text-primary italic text-sm mb-4">Published in Conference on Robot Learning (CoRL), 2023</p>
+              {/* <p className="text-primary italic text-sm mb-4">Published in Conference on Robot Learning (CoRL), 2023</p> */}
               <Link href="/publications">
                 <Button variant="outline" size="sm">
                   Read More
@@ -98,24 +98,17 @@ export default function Home() {
           <ul className="space-y-4">
             <li className="border-l-2 border-primary pl-4 pb-4">
               <div className="flex justify-between mb-1">
-                <h3 className="font-semibold">Paper accepted at CoRL 2023</h3>
-                <span className="text-sm text-muted-foreground">March 2023</span>
+                <h3 className="font-semibold">Started internship at Asper.ai</h3>
+                <span className="text-sm text-muted-foreground">March 2025</span>
               </div>
-              <p className="text-sm">Our paper on "Learning Generalizable 3D Scene Representations for 6DoF Grasping" was accepted at the Conference on Robot Learning.</p>
+              <p className="text-sm">ML pipeline and AI Agent system design</p>
             </li>
             <li className="border-l-2 border-primary pl-4 pb-4">
               <div className="flex justify-between mb-1">
-                <h3 className="font-semibold">Joined Stanford University</h3>
-                <span className="text-sm text-muted-foreground">September 2022</span>
+                <h3 className="font-semibold">Joined UC Berkeley</h3>
+                <span className="text-sm text-muted-foreground">September 2023</span>
               </div>
-              <p className="text-sm">Started my Master's degree in Electrical Engineering at Stanford University.</p>
-            </li>
-            <li className="border-l-2 border-primary pl-4">
-              <div className="flex justify-between mb-1">
-                <h3 className="font-semibold">Received Gold Medal from NIT Tiruchirappalli</h3>
-                <span className="text-sm text-muted-foreground">May 2022</span>
-              </div>
-              <p className="text-sm">Awarded the Gold Medal for academic excellence in the Department of Electrical and Electronics Engineering.</p>
+              <p className="text-sm">Started my Bachelor's degree in Data Science at UC Berkeley.</p>
             </li>
           </ul>
         </div>

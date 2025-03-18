@@ -37,16 +37,16 @@ export default function CV() {
             <div className="space-y-6">
               <div className="bg-card p-6 rounded-lg shadow-md">
                 <div className="flex flex-col md:flex-row justify-between mb-2">
-                  <h4 className="text-lg font-bold">Stanford University</h4>
-                  <span className="text-muted-foreground">Sep 2022 - Jun 2024</span>
+                  <h4 className="text-lg font-bold">University of California, Berkeley</h4>
+                  <span className="text-muted-foreground">Sep 2023 - Present</span>
                 </div>
-                <p className="mb-2">M.S. in Electrical Engineering, Information Systems and Science track</p>
-                <p className="text-sm text-muted-foreground">Relevant Coursework: Computer Vision, Deep Learning, Reinforcement Learning, Robot Autonomy</p>
+                <p className="mb-2">B.A. in Data Science</p>
+                <p className="text-sm text-muted-foreground">Relevant Coursework: Data Structure & Efficient Algorithms, Designing Deep Neural Networks, Intro to Artificial Intelligence, Data Engineering, Principles and Techniques of Data Science, Probability for Data Science, Algorithmic Economics,	Principles of Engineering Economics </p>
               </div>
               
               <div className="bg-card p-6 rounded-lg shadow-md">
                 <div className="flex flex-col md:flex-row justify-between mb-2">
-                  <h4 className="text-lg font-bold">National Institute of Technology Tiruchirappalli</h4>
+                  <h4 className="text-lg font-bold">Diablo Valley College</h4>
                   <span className="text-muted-foreground">Aug 2018 - May 2022</span>
                 </div>
                 <p className="mb-2">B.Tech in Electrical and Electronics Engineering</p>
@@ -62,24 +62,25 @@ export default function CV() {
             <div className="space-y-6">
               <div className="bg-card p-6 rounded-lg shadow-md">
                 <div className="flex flex-col md:flex-row justify-between mb-2">
-                  <h4 className="text-lg font-bold">Robotic Perception Intern</h4>
-                  <span className="text-muted-foreground">May 2023 - Aug 2023</span>
+                  <h4 className="text-lg font-bold">Market Intelligence Analyst (ML)</h4>
+                  <span className="text-muted-foreground">Jan 2025 - Present</span>
                 </div>
                 <p className="font-medium mb-2">Intelligent Autonomous Systems Lab, TU Darmstadt</p>
                 <ul className="list-disc pl-5 space-y-1 text-sm">
-                  <li>Developed a vision model for learning generalizable 3D scene representations for 6DoF grasping</li>
-                  <li>Implemented novel neural network architectures for efficient scene understanding</li>
-                  <li>Conducted experiments on real-world robotic platforms</li>
-                  <li>Presented research findings at international conferences</li>
+                  <li>Develop a real-time alert system that detects significant market and economic events</li>
+                  <li>Integrate historical impact analysis to predict changes in product demand and supply</li>
+                  <li>Calculate attribution factors to quantify the influence of detected events</li>
+                  <li>Generate actionable recommendations for operational strategies</li>
+                  <li>Design the system with an agentic framework, ensuring autonomy and adaptive decision-making capabilities</li>
                 </ul>
               </div>
               
               <div className="bg-card p-6 rounded-lg shadow-md">
                 <div className="flex flex-col md:flex-row justify-between mb-2">
-                  <h4 className="text-lg font-bold">Research Collaborator</h4>
-                  <span className="text-muted-foreground">Jan 2022 - May 2022</span>
+                  <h4 className="text-lg font-bold">Business Analyst and Development Management Intern</h4>
+                  <span className="text-muted-foreground">Dec 2022 - Aug 2023</span>
                 </div>
-                <p className="font-medium mb-2">Qmyric Inc., USA</p>
+                <p className="font-medium mb-2">Terra Drone Corp., USA</p>
                 <ul className="list-disc pl-5 space-y-1 text-sm">
                   <li>Investigated real-time sleep staging methods using heart rate variability data</li>
                   <li>Developed machine learning algorithms for sleep stage classification</li>
@@ -111,19 +112,19 @@ export default function CV() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <h4 className="font-bold mb-2">Programming Languages</h4>
-                  <p className="text-sm">Python, C++, MATLAB, JavaScript, PyTorch, TensorFlow</p>
+                  <p className="text-sm">Python, C++, MATLAB, PyTorch, TensorFlow, Scikit-learn</p>
                 </div>
                 <div>
                   <h4 className="font-bold mb-2">Tools & Frameworks</h4>
-                  <p className="text-sm">ROS, OpenCV, Docker, Git, Linux, PyTorch3D</p>
+                  <p className="text-sm">Git, Docker, Jupyter</p>
                 </div>
                 <div>
                   <h4 className="font-bold mb-2">Areas of Expertise</h4>
-                  <p className="text-sm">Computer Vision, Deep Learning, Robotics, Machine Learning</p>
+                  <p className="text-sm">Machine Learning, Neural Network</p>
                 </div>
                 <div>
                   <h4 className="font-bold mb-2">Languages</h4>
-                  <p className="text-sm">English (Fluent), Hindi (Native), German (Basic)</p>
+                  <p className="text-sm">English (Fluent), Japanese (Native)</p>
                 </div>
               </div>
             </div>
@@ -137,25 +138,7 @@ export default function CV() {
                 <li className="flex items-start">
                   <span className="text-primary mr-2">•</span>
                   <div>
-                    <span className="font-medium">Stanford Graduate Fellowship</span> - 2022-2024
-                  </div>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-primary mr-2">•</span>
-                  <div>
-                    <span className="font-medium">Best Paper Award</span> - IEEE Conference on Computer Vision and Pattern Recognition (CVPR) - 2021
-                  </div>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-primary mr-2">•</span>
-                  <div>
-                    <span className="font-medium">Gold Medal</span> - National Institute of Technology Tiruchirappalli - 2022
-                  </div>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-primary mr-2">•</span>
-                  <div>
-                    <span className="font-medium">DAAD Research Internship Scholarship</span> - 2023
+                    <span className="font-medium">Assocaite Student of DVC President's Award</span> - 2021-2022
                   </div>
                 </li>
               </ul>
@@ -198,7 +181,7 @@ export default function CV() {
               >
                 Download Full CV (PDF)
               </a>
-              <p className="text-sm text-muted-foreground mt-2">Last updated: March 2024</p>
+              <p className="text-sm text-muted-foreground mt-2">Last updated: March 2025</p>
             </div>
           </div>
         </div>

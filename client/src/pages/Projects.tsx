@@ -14,12 +14,11 @@ export default function Projects() {
             />
           </div>
           <div className="p-6">
-            <h3 className="text-xl font-bold mb-2">Scene Representation for 6DoF Grasping</h3>
-            <p className="mb-3 text-muted-foreground">Developed a vision model that learns a generalizable 3D scene representation for 6DoF grasping tasks in robotic environments.</p>
+            <h3 className="text-xl font-bold mb-2">Multi Agents Orchestration System</h3>
+            <p className="mb-3 text-muted-foreground">Developed an AI orchestration system that decomposed complex queries into targeted subqueries, enabling efficient collaboration among specialized AI agents.</p>
             <div className="flex flex-wrap gap-2 mb-4">
-              <span className="bg-primary/10 text-primary text-xs px-2 py-1 rounded">Computer Vision</span>
-              <span className="bg-primary/10 text-primary text-xs px-2 py-1 rounded">PyTorch</span>
-              <span className="bg-primary/10 text-primary text-xs px-2 py-1 rounded">Robotics</span>
+              <span className="bg-primary/10 text-primary text-xs px-2 py-1 rounded">Agent Architecture</span>
+              <span className="bg-primary/10 text-primary text-xs px-2 py-1 rounded">LangChain</span>
             </div>
             <a href="#" className="text-primary hover:underline">View Project →</a>
           </div>
@@ -35,12 +34,13 @@ export default function Projects() {
             />
           </div>
           <div className="p-6">
-            <h3 className="text-xl font-bold mb-2">Real-time Sleep Staging using IBI</h3>
-            <p className="mb-3 text-muted-foreground">Researched and implemented real-time sleep staging algorithms using Interbeat Interval (IBI) of heart in collaboration with Qmyric Inc.</p>
+            <h3 className="text-xl font-bold mb-2">Faulty Commit Classifier: Enhancing Code Quality with Machine Learning</h3>
+            <p className="mb-3 text-muted-foreground">Engineered an end-to-end machine learning pipeline for faulty commit classification that processed data.</p>
             <div className="flex flex-wrap gap-2 mb-4">
               <span className="bg-primary/10 text-primary text-xs px-2 py-1 rounded">Machine Learning</span>
-              <span className="bg-primary/10 text-primary text-xs px-2 py-1 rounded">Signal Processing</span>
-              <span className="bg-primary/10 text-primary text-xs px-2 py-1 rounded">TensorFlow</span>
+              <span className="bg-primary/10 text-primary text-xs px-2 py-1 rounded">End-to-end ML pipeline</span>
+              <span className="bg-primary/10 text-primary text-xs px-2 py-1 rounded">PyTorch</span>
+              <span className="bg-primary/10 text-primary text-xs px-2 py-1 rounded">Scikit-learn</span>
             </div>
             <a href="#" className="text-primary hover:underline">View Project →</a>
           </div>
@@ -56,12 +56,12 @@ export default function Projects() {
             />
           </div>
           <div className="p-6">
-            <h3 className="text-xl font-bold mb-2">Gait Recognition with 3D Convolution</h3>
-            <p className="mb-3 text-muted-foreground">Developed novel 3D Convolution models to tackle issues with occluded frames in gait recognition systems.</p>
+            <h3 className="text-xl font-bold mb-2">Vision Transformer (ViT) and Masked Autoencoder (MAE)</h3>
+            <p className="mb-3 text-muted-foreground">Developed and deployed a hybrid transformer-based image classification pipeline on CIFAR10 dataset.</p>
             <div className="flex flex-wrap gap-2 mb-4">
               <span className="bg-primary/10 text-primary text-xs px-2 py-1 rounded">Computer Vision</span>
-              <span className="bg-primary/10 text-primary text-xs px-2 py-1 rounded">Deep Learning</span>
-              <span className="bg-primary/10 text-primary text-xs px-2 py-1 rounded">Keras</span>
+              <span className="bg-primary/10 text-primary text-xs px-2 py-1 rounded">Autoencoders</span>
+              <span className="bg-primary/10 text-primary text-xs px-2 py-1 rounded">Transformer</span>
             </div>
             <a href="#" className="text-primary hover:underline">View Project →</a>
           </div>
@@ -77,12 +77,11 @@ export default function Projects() {
             />
           </div>
           <div className="p-6">
-            <h3 className="text-xl font-bold mb-2">Advanced Neural Network Architectures</h3>
-            <p className="mb-3 text-muted-foreground">Researched and implemented cutting-edge neural network architectures for computer vision applications.</p>
+            <h3 className="text-xl font-bold mb-2">Predictive Modeling for Housing Valuation in Cook County Analyzing Fairness and Performance</h3>
+            <p className="mb-3 text-muted-foreground">Developed a predictive model for housing valuation in Cook County, Chicago, analyzing data from over 500,000 homes and 61 features to assess the fairness of government-published valuations.</p>
             <div className="flex flex-wrap gap-2 mb-4">
-              <span className="bg-primary/10 text-primary text-xs px-2 py-1 rounded">Deep Learning</span>
-              <span className="bg-primary/10 text-primary text-xs px-2 py-1 rounded">PyTorch</span>
-              <span className="bg-primary/10 text-primary text-xs px-2 py-1 rounded">Research</span>
+              <span className="bg-primary/10 text-primary text-xs px-2 py-1 rounded">Feature Engineerign</span>
+              <span className="bg-primary/10 text-primary text-xs px-2 py-1 rounded">PCA</span>
             </div>
             <a href="#" className="text-primary hover:underline">View Project →</a>
           </div>
