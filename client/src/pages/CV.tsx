@@ -65,7 +65,7 @@ export default function CV() {
                   <h4 className="text-lg font-bold">Market Intelligence Analyst (ML)</h4>
                   <span className="text-muted-foreground">Jan 2025 - Present</span>
                 </div>
-                <p className="font-medium mb-2">Intelligent Autonomous Systems Lab, TU Darmstadt</p>
+                <p className="font-medium mb-2">Asper.ai</p>
                 <ul className="list-disc pl-5 space-y-1 text-sm">
                   <li>Develop a real-time alert system that detects significant market and economic events</li>
                   <li>Integrate historical impact analysis to predict changes in product demand and supply</li>
@@ -91,10 +91,10 @@ export default function CV() {
               
               <div className="bg-card p-6 rounded-lg shadow-md">
                 <div className="flex flex-col md:flex-row justify-between mb-2">
-                  <h4 className="text-lg font-bold">Computer Vision Intern</h4>
-                  <span className="text-muted-foreground">May 2021 - Jul 2021</span>
+                  <h4 className="text-lg font-bold">Programming Instructor</h4>
+                  <span className="text-muted-foreground">May 2019 - Aug 2020</span>
                 </div>
-                <p className="font-medium mb-2">Pattern Recognition Laboratory, IIT-BHU</p>
+                <p className="font-medium mb-2">Litalico Inc</p>
                 <ul className="list-disc pl-5 space-y-1 text-sm">
                   <li>Researched novel 3D CNN architectures for gait recognition under occlusion</li>
                   <li>Implemented and evaluated models on challenging datasets</li>
@@ -145,7 +145,7 @@ export default function CV() {
             </div>
           </div>
           
-          {/* Service Section */}
+          {/* Service Section
           <div id="service" className="scroll-mt-20">
             <h3 className="text-2xl font-bold mb-4 text-primary">Service</h3>
             <div className="bg-card p-6 rounded-lg shadow-md">
@@ -170,7 +170,7 @@ export default function CV() {
                 </li>
               </ul>
             </div>
-          </div>
+          </div> */}
           
           {/* Download CV Section */}
           <div id="download" className="scroll-mt-20">
