@@ -1,5 +1,5 @@
 import { AspectRatio } from "@/components/ui/aspect-ratio";
-import profileImage from "../../../public/images/profile.jpeg";
+import { getPublicPath } from "@/utils/path";
 
 export default function Profile() {
   return (
@@ -77,7 +77,7 @@ export default function Profile() {
           <div className="bg-card p-2 rounded-lg shadow-md h-full">
             <AspectRatio ratio={4/5} className="overflow-hidden rounded">
               <img 
-                src={profileImage}
+                src={getPublicPath('/images/profile.jpeg')}
                 alt="Profile Picture" 
                 className="object-cover w-full h-full"
               />
