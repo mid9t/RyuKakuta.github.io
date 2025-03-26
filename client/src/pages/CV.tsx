@@ -49,9 +49,9 @@ export default function CV() {
                   <h4 className="text-lg font-bold">Diablo Valley College</h4>
                   <span className="text-muted-foreground">Aug 2018 - May 2022</span>
                 </div>
-                <p className="mb-2">B.Tech in Electrical and Electronics Engineering</p>
-                <p className="text-sm text-muted-foreground">GPA: 9.8/10.0, Graduated with Honors</p>
-                <p className="text-sm text-muted-foreground">Relevant Coursework: Machine Learning, Digital Signal Processing, Control Systems, Embedded Systems</p>
+                <p className="mb-2">Associate in Computer Science</p>
+                <p className="text-sm text-muted-foreground">GPA: 4.0/4.0</p>
+                <p className="text-sm text-muted-foreground">Calculus I, II, III, Advanced Programming in C++, Assembly Language Foundation</p>
               </div>
             </div>
           </div>
@@ -62,10 +62,10 @@ export default function CV() {
             <div className="space-y-6">
               <div className="bg-card p-6 rounded-lg shadow-md">
                 <div className="flex flex-col md:flex-row justify-between mb-2">
-                  <h4 className="text-lg font-bold">Market Intelligence Analyst (ML)</h4>
+                  <h4 className="text-lg font-bold">Software Engineer</h4>
                   <span className="text-muted-foreground">Jan 2025 - Present</span>
                 </div>
-                <p className="font-medium mb-2">Asper.ai</p>
+                <p className="font-medium mb-2">Fractal Analytics</p>
                 <ul className="list-disc pl-5 space-y-1 text-sm">
                   <li>Develop a real-time alert system that detects significant market and economic events</li>
                   <li>Integrate historical impact analysis to predict changes in product demand and supply</li>
@@ -82,10 +82,8 @@ export default function CV() {
                 </div>
                 <p className="font-medium mb-2">Terra Drone Corp., USA</p>
                 <ul className="list-disc pl-5 space-y-1 text-sm">
-                  <li>Investigated real-time sleep staging methods using heart rate variability data</li>
-                  <li>Developed machine learning algorithms for sleep stage classification</li>
-                  <li>Optimized models for deployment on wearable devices</li>
-                  <li>Co-authored research papers published in IEEE journals</li>
+                  <li>Created an automated sales quotation system using Google Spreadsheet that reduced quotation lead times by 18%</li>
+                  <li>Collaborated with clients to identify and implement process improvements that increase client satisfaction by 12% and boosted sales conversion rates by 8%</li>
                 </ul>
               </div>
               
@@ -96,10 +94,8 @@ export default function CV() {
                 </div>
                 <p className="font-medium mb-2">Litalico Inc</p>
                 <ul className="list-disc pl-5 space-y-1 text-sm">
-                  <li>Researched novel 3D CNN architectures for gait recognition under occlusion</li>
-                  <li>Implemented and evaluated models on challenging datasets</li>
-                  <li>Achieved state-of-the-art performance on occluded gait recognition tasks</li>
-                  <li>Collaborated with senior researchers to publish results</li>
+                  <li>Designed and implemented LEGO MINDSTORMS programming curricula, increasing student engagement by 25% and boosting task completion rates by 30% among a class of 20 elementary students</li>
+                  <li>Created mock A/B testing environments to simulate diverse scenarios while tracking key metrics—including lines of code, task completion, and number of faulty code—to identify improvement areas and optimize learning outcomes.</li>
                 </ul>
               </div>
             </div>
@@ -144,34 +140,7 @@ export default function CV() {
               </ul>
             </div>
           </div>
-          
-          {/* Service Section
-          <div id="service" className="scroll-mt-20">
-            <h3 className="text-2xl font-bold mb-4 text-primary">Service</h3>
-            <div className="bg-card p-6 rounded-lg shadow-md">
-              <ul className="space-y-3">
-                <li className="flex items-start">
-                  <span className="text-primary mr-2">•</span>
-                  <div>
-                    <span className="font-medium">Reviewer</span> - IEEE Conference on Computer Vision and Pattern Recognition (CVPR), 2023
-                  </div>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-primary mr-2">•</span>
-                  <div>
-                    <span className="font-medium">Volunteer</span> - Conference on Robot Learning (CoRL), 2023
-                  </div>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-primary mr-2">•</span>
-                  <div>
-                    <span className="font-medium">Mentor</span> - Spider R&D Club, NIT Tiruchirappalli, 2020-2022
-                  </div>
-                </li>
-              </ul>
-            </div>
-          </div> */}
-          
+        
           {/* Download CV Section */}
           <div id="download" className="scroll-mt-20">
             <div className="bg-card p-6 rounded-lg shadow-md text-center">
