@@ -1,12 +1,12 @@
 1:"$Sreact.fragment"
-2:I[21602,["/_next/static/chunks/168080be52ea12d3.js","/_next/static/chunks/62e13547160b9a0a.js","/_next/static/chunks/b618f0a405b2a2ed.js"],"CursorGlow"]
-3:I[69990,["/_next/static/chunks/168080be52ea12d3.js","/_next/static/chunks/62e13547160b9a0a.js","/_next/static/chunks/b618f0a405b2a2ed.js"],"Hero"]
-4:I[77210,["/_next/static/chunks/168080be52ea12d3.js","/_next/static/chunks/62e13547160b9a0a.js","/_next/static/chunks/b618f0a405b2a2ed.js"],"About"]
-5:I[43835,["/_next/static/chunks/168080be52ea12d3.js","/_next/static/chunks/62e13547160b9a0a.js","/_next/static/chunks/b618f0a405b2a2ed.js"],"Experience"]
-6:I[77307,["/_next/static/chunks/168080be52ea12d3.js","/_next/static/chunks/62e13547160b9a0a.js","/_next/static/chunks/b618f0a405b2a2ed.js"],"Projects"]
-7:I[36554,["/_next/static/chunks/168080be52ea12d3.js","/_next/static/chunks/62e13547160b9a0a.js","/_next/static/chunks/b618f0a405b2a2ed.js"],"Contact"]
-8:I[65303,["/_next/static/chunks/168080be52ea12d3.js","/_next/static/chunks/62e13547160b9a0a.js","/_next/static/chunks/b618f0a405b2a2ed.js"],"Footer"]
-9:I[74630,["/_next/static/chunks/62e13547160b9a0a.js","/_next/static/chunks/1afd682639f530ed.js"],"OutletBoundary"]
+2:I[21602,["/RyuKakuta.github.io/_next/static/chunks/168080be52ea12d3.js","/RyuKakuta.github.io/_next/static/chunks/62e13547160b9a0a.js","/RyuKakuta.github.io/_next/static/chunks/4944577518c542b0.js"],"CursorGlow"]
+3:I[69990,["/RyuKakuta.github.io/_next/static/chunks/168080be52ea12d3.js","/RyuKakuta.github.io/_next/static/chunks/62e13547160b9a0a.js","/RyuKakuta.github.io/_next/static/chunks/4944577518c542b0.js"],"Hero"]
+4:I[77210,["/RyuKakuta.github.io/_next/static/chunks/168080be52ea12d3.js","/RyuKakuta.github.io/_next/static/chunks/62e13547160b9a0a.js","/RyuKakuta.github.io/_next/static/chunks/4944577518c542b0.js"],"About"]
+5:I[43835,["/RyuKakuta.github.io/_next/static/chunks/168080be52ea12d3.js","/RyuKakuta.github.io/_next/static/chunks/62e13547160b9a0a.js","/RyuKakuta.github.io/_next/static/chunks/4944577518c542b0.js"],"Experience"]
+6:I[77307,["/RyuKakuta.github.io/_next/static/chunks/168080be52ea12d3.js","/RyuKakuta.github.io/_next/static/chunks/62e13547160b9a0a.js","/RyuKakuta.github.io/_next/static/chunks/4944577518c542b0.js"],"Projects"]
+7:I[36554,["/RyuKakuta.github.io/_next/static/chunks/168080be52ea12d3.js","/RyuKakuta.github.io/_next/static/chunks/62e13547160b9a0a.js","/RyuKakuta.github.io/_next/static/chunks/4944577518c542b0.js"],"Contact"]
+8:I[65303,["/RyuKakuta.github.io/_next/static/chunks/168080be52ea12d3.js","/RyuKakuta.github.io/_next/static/chunks/62e13547160b9a0a.js","/RyuKakuta.github.io/_next/static/chunks/4944577518c542b0.js"],"Footer"]
+9:I[74630,["/RyuKakuta.github.io/_next/static/chunks/62e13547160b9a0a.js","/RyuKakuta.github.io/_next/static/chunks/1afd682639f530ed.js"],"OutletBoundary"]
 a:"$Sreact.suspense"
-0:{"buildId":"laf_SBsT1wALVJcN20fah","rsc":["$","$1","c",{"children":[["$","main",null,{"className":"relative min-h-screen bg-background overflow-x-hidden","children":[["$","$L2",null,{}],["$","$L3",null,{}],["$","$L4",null,{}],["$","$L5",null,{}],["$","$L6",null,{}],["$","$L7",null,{}],["$","$L8",null,{}]]}],[["$","script","script-0",{"src":"/_next/static/chunks/62e13547160b9a0a.js","async":true}],["$","script","script-1",{"src":"/_next/static/chunks/b618f0a405b2a2ed.js","async":true}]],["$","$L9",null,{"children":["$","$a",null,{"name":"Next.MetadataOutlet","children":"$@b"}]}]]}],"loading":null,"isPartial":false}
+0:{"buildId":"6aQCDrHr0vg7sKIe1uYc7","rsc":["$","$1","c",{"children":[["$","main",null,{"className":"relative min-h-screen bg-background overflow-x-hidden","children":[["$","$L2",null,{}],["$","$L3",null,{}],["$","$L4",null,{}],["$","$L5",null,{}],["$","$L6",null,{}],["$","$L7",null,{}],["$","$L8",null,{}]]}],[["$","script","script-0",{"src":"/RyuKakuta.github.io/_next/static/chunks/62e13547160b9a0a.js","async":true}],["$","script","script-1",{"src":"/RyuKakuta.github.io/_next/static/chunks/4944577518c542b0.js","async":true}]],["$","$L9",null,{"children":["$","$a",null,{"name":"Next.MetadataOutlet","children":"$@b"}]}]]}],"loading":null,"isPartial":false}
 b:null
