@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EDL Debate: Uncertainty Quantification in Question</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #f5f3ee;
+  --bg2: #ede9e0;
+  --bg3: #e2ddd3;
+  --ink: #1c1a16;
+  --ink2: #3a3830;
+  --ink3: #6b6860;
+  --ink4: #9c9a92;
+  --border: rgba(28,26,22,0.12);
+  --border2: rgba(28,26,22,0.22);
+
+  /* Agent colors */
+  --skeptic: #7a2e0e;
+  --skeptic-bg: #fdf2ec;
+  --skeptic-mid: #c4400f;
+  --skeptic-light: #fae0d0;
+
+  --defender: #0e4a7a;
+  --defender-bg: #ecf4fd;
+  --defender-mid: #1a6db5;
+  --defender-light: #d0e6fa;
+
+  --judge: #1a5c2e;
+  --judge-bg: #edf7f0;
+  --judge-mid: #2a8548;
+  --judge-light: #c8e8d2;
+
+  --collab: #4a1a7a;
+  --collab-bg: #f4edfb;
+  --collab-mid: #7a35b5;
+  --collab-light: #e0ccf0;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Instrument Sans', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 15px;
+  line-height: 1.7;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 3rem 2rem 6rem;
+}
+
+/* ── HEADER ── */
+.page-header {
+  border-bottom: 2px solid var(--ink);
+  padding-bottom: 2rem;
+  margin-bottom: 3rem;
+}
+.page-tag {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--ink4);
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.page-tag::before {
+  content: '';
+  display: inline-block;
+  width: 20px;
+  height: 1.5px;
+  background: var(--ink4);
+}
+h1 {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-size: 2.4rem;
+  line-height: 1.15;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+.page-sub {
+  font-size: 0.95rem;
+  color: var(--ink3);
+  margin-top: 0.6rem;
+  max-width: 650px;
+  line-height: 1.6;
+}
+.agent-legend {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--ink2);
+}
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+/* ── PHASE HEADER ── */
+.phase {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 3rem 0 1.5rem;
+}
+.phase-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--ink4);
+  background: var(--bg3);
+  padding: 3px 8px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+.phase-title {
+  font-family: 'Instrument Serif', serif;
+  font-size: 1.35rem;
+  font-weight: 400;
+  color: var(--ink);
+}
+.phase-line {
+  flex: 1;
+  height: 0.5px;
+  background: var(--border2);
+}
+
+/* ── AGENT CARDS ── */
+.agent-card {
+  border-radius: 10px;
+  padding: 1.5rem 1.75rem;
+  margin-bottom: 1.25rem;
+  border: 0.5px solid;
+  position: relative;
+}
+.agent-card.skeptic {
+  background: var(--skeptic-bg);
+  border-color: rgba(122,46,14,0.25);
+}
+.agent-card.defender {
+  background: var(--defender-bg);
+  border-color: rgba(14,74,122,0.25);
+}
+.agent-card.judge {
+  background: var(--judge-bg);
+  border-color: rgba(26,92,46,0.25);
+}
+.agent-card.collab {
+  background: var(--collab-bg);
+  border-color: rgba(74,26,122,0.25);
+}
+
+.agent-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 0.9rem;
+}
+.agent-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  flex-shrink: 0;
+}
+.skeptic .agent-avatar { background: var(--skeptic-light); color: var(--skeptic); }
+.defender .agent-avatar { background: var(--defender-light); color: var(--defender); }
+.judge .agent-avatar { background: var(--judge-light); color: var(--judge); }
+.collab .agent-avatar { background: var(--collab-light); color: var(--collab); }
+
+.agent-name {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.skeptic .agent-name { color: var(--skeptic-mid); }
+.defender .agent-name { color: var(--defender-mid); }
+.judge .agent-name { color: var(--judge-mid); }
+.collab .agent-name { color: var(--collab-mid); }
+
+.agent-role {
+  font-size: 0.7rem;
+  color: var(--ink4);
+  margin-left: 2px;
+}
+
+.agent-body p {
+  color: var(--ink2);
+  font-size: 0.925rem;
+  margin-bottom: 0.85rem;
+}
+.agent-body p:last-child { margin-bottom: 0; }
+.agent-body strong { font-weight: 600; color: var(--ink); }
+.agent-body em { font-style: italic; }
+
+/* ── CITATION PILLS ── */
+.cite {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  font-weight: 500;
+  padding: 1px 6px;
+  border-radius: 3px;
+  vertical-align: middle;
+  margin: 0 1px;
+}
+.skeptic .cite, .cite.s { background: var(--skeptic-light); color: var(--skeptic); }
+.defender .cite, .cite.d { background: var(--defender-light); color: var(--defender); }
+.judge .cite, .cite.j { background: var(--judge-light); color: var(--judge); }
+
+/* ── CLAIM BOXES ── */
+.claim-box {
+  border-radius: 6px;
+  padding: 0.85rem 1.1rem;
+  margin: 1rem 0;
+  border-left: 3px solid;
+}
+.claim-box.finding {
+  border-left-color: var(--skeptic-mid);
+  background: var(--skeptic-light);
+}
+.claim-box.rebuttal {
+  border-left-color: var(--defender-mid);
+  background: var(--defender-light);
+}
+.claim-box.verdict {
+  border-left-color: var(--judge-mid);
+  background: var(--judge-light);
+}
+.claim-box.synthesis {
+  border-left-color: var(--collab-mid);
+  background: var(--collab-light);
+}
+.claim-box .cb-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 0.3rem;
+}
+.finding .cb-label { color: var(--skeptic-mid); }
+.rebuttal .cb-label { color: var(--defender-mid); }
+.verdict .cb-label { color: var(--judge-mid); }
+.synthesis .cb-label { color: var(--collab-mid); }
+.claim-box p { font-size: 0.88rem; color: var(--ink); margin: 0; }
+
+/* ── FORMULA / CODE BLOCK ── */
+.formula-block {
+  background: var(--bg3);
+  border: 0.5px solid var(--border2);
+  border-radius: 5px;
+  padding: 0.75rem 1rem;
+  margin: 0.75rem 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  color: var(--ink);
+  line-height: 1.6;
+}
+.formula-block .comment {
+  color: var(--ink4);
+  font-style: italic;
+}
+
+/* ── EXCHANGE THREADING ── */
+.exchange-thread {
+  border-left: 2px solid var(--border2);
+  padding-left: 1.25rem;
+  margin: 1.5rem 0 1.5rem 0.5rem;
+}
+
+/* ── DATA PANEL ── */
+.data-panel {
+  background: var(--bg);
+  border: 0.5px solid var(--border2);
+  border-radius: 8px;
+  padding: 1.1rem 1.25rem;
+  margin: 1rem 0;
+}
+.data-panel .dp-title {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink3);
+  margin-bottom: 0.5rem;
+}
+.data-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 4px 0;
+  border-bottom: 0.5px solid var(--border);
+  font-size: 0.85rem;
+}
+.data-row:last-child { border-bottom: none; }
+.data-row .method { color: var(--ink2); font-weight: 500; }
+.data-row .score { font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; }
+.score.hi { color: var(--judge-mid); font-weight: 600; }
+.score.lo { color: var(--skeptic-mid); }
+.score.mid { color: var(--defender-mid); }
+
+/* ── VERDICT BLOCK ── */
+.final-verdict {
+  border: 1.5px solid var(--judge-mid);
+  border-radius: 10px;
+  padding: 1.75rem 2rem;
+  margin-top: 2.5rem;
+  background: var(--judge-bg);
+}
+.fv-title {
+  font-family: 'Instrument Serif', serif;
+  font-size: 1.25rem;
+  font-weight: 400;
+  color: var(--judge);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.fv-title::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--judge-mid);
+  flex-shrink: 0;
+}
+.verdict-item {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 0.75rem;
+  font-size: 0.9rem;
+}
+.verdict-item .vi-mark {
+  font-weight: 600;
+  flex-shrink: 0;
+  font-size: 0.78rem;
+  padding-top: 2px;
+}
+.vi-mark.for { color: var(--defender-mid); }
+.vi-mark.against { color: var(--skeptic-mid); }
+.vi-mark.nuance { color: var(--judge-mid); }
+.verdict-item .vi-text { color: var(--ink2); }
+
+/* ── DIVIDER ── */
+hr.section-div {
+  border: none;
+  border-top: 0.5px solid var(--border);
+  margin: 3rem 0;
+}
+
+/* ── NOTES AT BOTTOM ── */
+.footnote {
+  font-size: 0.76rem;
+  color: var(--ink4);
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 0.5px solid var(--border);
+  line-height: 1.6;
+}
+
+@media (max-width: 600px) {
+  body { padding: 1.25rem 1rem 4rem; }
+  h1 { font-size: 1.75rem; }
+  .agent-legend { gap: 0.75rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     PAGE HEADER
+═══════════════════════════════════════════ -->
+<div class="page-header">
+  <div class="page-tag">Structured Academic Debate · Three-Agent Framework</div>
+  <h1>Are EDL's Uncertainty Claims a Mirage?</h1>
+  <p class="page-sub">A collegial multi-agent debate on whether Evidential Deep Learning constitutes genuine uncertainty quantification or a well-functioning OOD detector in disguise — and what this means for real-world deployment of LLM-based systems.</p>
+
+  <div class="agent-legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--skeptic-mid)"></div>Agent S — The Skeptic</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--defender-mid)"></div>Agent D — The Defender</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--judge-mid)"></div>Agent J — The Adjudicator</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--collab-mid)"></div>Joint synthesis moments</div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     PHASE 0: SETUP
+═══════════════════════════════════════════ -->
+<div class="phase">
+  <span class="phase-num">PHASE 0</span>
+  <span class="phase-title">Research Formation — Each Agent Establishes Their Prior</span>
+  <div class="phase-line"></div>
+</div>
+
+<div class="agent-card judge">
+  <div class="agent-label">
+    <div class="agent-avatar">J</div>
+    <span class="agent-name">Agent J</span>
+    <span class="agent-role">— Adjudicator</span>
+  </div>
+  <div class="agent-body">
+    <p>Before we begin trading claims, let us agree on what we are actually debating. The prior analysis positioned EDL's vacuity score as a principled, single-pass uncertainty signal suitable for routing high-stakes LLM outputs — routing low-vacuity outputs automatically, and escalating high-vacuity ones to human review. Shen et al. (NeurIPS 2024) now challenge whether that vacuity score means what we claimed it means. This is a precise, falsifiable question. I propose we structure the debate in three rounds: <strong>(1) core theoretical charge and response, (2) empirical evidence, (3) practical implications for deployment.</strong> The goal is not to "win" but to arrive at a defensible, nuanced position on whether and how EDL should appear in a responsible AI stack.</p>
+  </div>
+</div>
+
+<div class="agent-card skeptic">
+  <div class="agent-label">
+    <div class="agent-avatar">S</div>
+    <span class="agent-name">Agent S</span>
+    <span class="agent-role">— The Skeptic</span>
+  </div>
+  <div class="agent-body">
+    <p>I have studied the NeurIPS 2024 paper carefully and I want to be collegial about this — the prior analysis was not wrong about EDL's <em>practical utility</em>. But it was, I think, wrong about its <em>theoretical grounding</em>. Those are two very different things. If we are recommending EDL to a hospital system or a legal department on the grounds that it "produces a principled epistemic uncertainty signal," and the paper demonstrates that the vacuity score is not that at all, then we have a problem that is more than academic. Let me form my draft position before sharing it with Agent D.</p>
+    <div class="claim-box finding">
+      <div class="cb-label">Skeptic's Draft Position</div>
+      <p>EDL methods, as currently formulated, do not produce statistically meaningful epistemic uncertainty. The vacuity score is better understood as a free-energy proxy for OOD distance — useful for detection, but not for the kind of graded, sample-size-sensitive uncertainty quantification that high-stakes deployment actually requires. Deploying EDL with claims about "knowing what it doesn't know" is epistemically overclaiming.</p>
+    </div>
+  </div>
+</div>
+
+<div class="agent-card defender">
+  <div class="agent-label">
+    <div class="agent-avatar">D</div>
+    <span class="agent-name">Agent D</span>
+    <span class="agent-role">— The Defender</span>
+  </div>
+  <div class="agent-body">
+    <p>I appreciate the precision of Agent S's framing. My research position starts from a different angle: the theoretical critique and the practical question are being conflated. The paper by Shen et al. proves that EDL's uncertainty does not satisfy dictionary-definition properties of epistemic uncertainty. It does <em>not</em> prove that EDL's outputs are useless for downstream safety routing. These are separable claims. Let me draft my position for sharing.</p>
+    <div class="claim-box rebuttal">
+      <div class="cb-label">Defender's Draft Position</div>
+      <p>EDL's empirical performance on OOD detection and selective classification tasks — the exact tasks that matter for business deployment — is competitive and in several cases superior to alternatives. The theoretical critique reveals a gap between what EDL claims to measure and what it actually measures. It does not demonstrate that what EDL measures is unhelpful. A system that reliably detects the boundary of its competence (even for theoretically impure reasons) is more valuable than a theoretically correct system with worse downstream performance.</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     PHASE 1: THEORETICAL CHARGE
+═══════════════════════════════════════════ -->
+<div class="phase">
+  <span class="phase-num">PHASE 1</span>
+  <span class="phase-title">The Core Theoretical Charge</span>
+  <div class="phase-line"></div>
+</div>
+
+<div class="agent-card skeptic">
+  <div class="agent-label">
+    <div class="agent-avatar">S</div>
+    <span class="agent-name">Agent S</span>
+    <span class="agent-role">— Theoretical charge</span>
+  </div>
+  <div class="agent-body">
+    <p>The prior analysis described EDL's vacuity as follows: "When all evidence is zero, vacuity equals 1 — total ignorance. When evidence is abundant, S is large and vacuity approaches 0." This framing implies that vacuity tracks how much the model <em>knows</em> — that it is genuinely responsive to the amount of training evidence the model has accumulated. Theorem 5.1 of Shen et al. falsifies this interpretation directly.</p>
+
+    <div class="formula-block">
+      p*(π|x) = p(π) · exp(ν · E_{p(y|x)}[log p(y|π)]) / Z(x)
+      <br><br>
+      <span class="comment">-- The optimal meta-distribution is sample-size-INDEPENDENT.</span>
+      <span class="comment">-- It converges to Dir(π; α₀ + ν·η(x)), fixed regardless of N.</span>
+      <span class="comment">-- ν = λ⁻¹ is a hyperparameter, not a data-driven quantity.</span>
+    </div>
+
+    <p>What this means concretely: <strong>even if you train an EDL model on infinite data, its epistemic uncertainty (vacuity) on in-distribution points does not converge to zero.</strong> That is the definitional property that separates epistemic uncertainty from aleatoric uncertainty. EDL fails this property by construction. This is not a minor calibration issue — it is a structural impossibility given the single-model assumption (δ(ψ − ψ*)). The Dirichlet framework is doing something useful, but it cannot do what it claims to do.</p>
+
+    <div class="claim-box finding">
+      <div class="cb-label">Core Charge 1 — Non-Vanishing Epistemic Uncertainty</div>
+      <p>Figure 1(a) of Shen et al. confirms this empirically across BM, RPriorNet, PostNet, and NatPN on CIFAR10: as sample size increases from 10³ to 10⁴, epistemic uncertainty remains nearly constant at ~10⁻¹, while test accuracy climbs from ~50% to ~85%. The model gets smarter; its "uncertainty" does not respond.</p>
+    </div>
+
+    <p>The second charge concerns aleatoric uncertainty. The prior analysis correctly distinguished epistemic from aleatoric uncertainty — "aleatoric uncertainty captures irreducible noise inherent in the problem." But Eq. (8) of Shen et al. shows that EDL's aleatoric uncertainty term depends on the regularization hyperparameter λ. This is definitionally incoherent: <strong>irreducible noise cannot be a function of your optimizer's regularization schedule.</strong></p>
+
+    <div class="claim-box finding">
+      <div class="cb-label">Core Charge 2 — λ-Contaminated Aleatoric Uncertainty</div>
+      <p>Figure 1(b) shows aleatoric uncertainty varying by a full order of magnitude (roughly 0.1 to 2.0 on the y-axis) as λ sweeps from 10⁻³ to 10⁻¹. A quantity that varies with a training hyperparameter is not measuring irreducible data noise. It is measuring something else entirely.</p>
+    </div>
+
+    <p>My third and most consequential charge is the EBM reinterpretation. Shen et al. show a structural isomorphism between EDL and energy-based OOD detectors — Liu et al.'s free-energy framework, specifically. Setting E_φ(x) = −log 1ᵀ_C α_ψ(x) maps EDL's Dirichlet sum directly onto a free-energy quantity. <strong>This means EDL's "uncertainty" is essentially a repurposed free-energy discriminator between in-distribution and out-of-distribution regions.</strong> It is a distance metric dressed in Bayesian clothing. That is not nothing — but it is much narrower than what the prior analysis claimed.</p>
+  </div>
+</div>
+
+<div class="exchange-thread">
+  <div class="agent-card defender">
+    <div class="agent-label">
+      <div class="agent-avatar">D</div>
+      <span class="agent-name">Agent D</span>
+      <span class="agent-role">— Responding to theoretical charge</span>
+    </div>
+    <div class="agent-body">
+      <p>Agent S, I want to engage with all three charges, but let me begin with an acknowledgment: <strong>charges 1 and 2 are substantially correct, and I will not defend them as a complete characterization of EDL as originally marketed.</strong> The non-vanishing epistemic uncertainty is a genuine theoretical deficiency. I concede that the prior analysis's framing of vacuity as a principled epistemic signal overstates what the theory supports.</p>
+
+      <p>However, I want to press on the implications. Your argument has the structure: EDL fails the formal definition of epistemic uncertainty, therefore its uncertainty signal is unreliable for deployment. But this inference requires a hidden premise: that formal theoretical correctness is necessary for practical reliability. I do not think that premise is true, and I think the paper's own results undermine it.</p>
+
+      <div class="claim-box rebuttal">
+        <div class="cb-label">Rebuttal to Charge 1 — The "Useful Mirage" Problem</div>
+        <p>The non-vanishing epistemic uncertainty is theoretically incoherent, but ask the practical question: is a signal that stays high for OOD inputs and stays lower for ID inputs useful for routing, even if it doesn't satisfy sample-size convergence? The answer from the empirical results is yes — BM achieves AUROC of 97.5 on SVHN, 93.6 on FMNIST. The vacuity signal reliably discriminates even while failing the formal definition.</p>
+      </div>
+
+      <p>On charge 3, the EBM reinterpretation: I would argue this is actually a <em>clarifying</em> rather than a <em>damaging</em> recharacterization for deployment purposes. If we know EDL is an energy-based OOD detector, we can use it as one — and use it well. OOD detection is precisely what the routing architecture in the prior analysis required: a signal that distinguishes "this query is within the model's competence envelope" from "this query is outside it." The EBM framing gives us a cleaner way to tune the system (the energy threshold corresponds to our operational confidence cutoff).</p>
+
+      <div class="claim-box rebuttal">
+        <div class="cb-label">Rebuttal to Charge 3 — EBM is Deployment-Adequate</div>
+        <p>The deployment architecture only requires that the signal be monotonically correlated with "query is problematic" — it does not require that it be a properly calibrated Bayesian posterior over epistemic uncertainty. If EDL's free-energy proxy achieves this correlation reliably, the philosophical incoherence of the Dirichlet framing is a theoretical problem, not an operational one.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="agent-card judge">
+  <div class="agent-label">
+    <div class="agent-avatar">J</div>
+    <span class="agent-name">Agent J</span>
+    <span class="agent-role">— First-round adjudication</span>
+  </div>
+  <div class="agent-body">
+    <p>Let me attempt to distill this exchange. Agent S has demonstrated, with rigorous theoretical backing, that EDL's uncertainty scores do not have the mathematical properties they are claimed to have. Agent D has conceded this while arguing the practical consequences are limited. Both positions have merit, and I think the tension can be resolved by distinguishing three separate questions that have been conflated throughout this debate:</p>
+    <div class="claim-box verdict">
+      <div class="cb-label">Adjudicator's Conceptual Separation</div>
+      <p><strong>Q1 (Theoretical):</strong> Does EDL produce statistically meaningful epistemic uncertainty? Answer: No — Shen et al. establish this convincingly.<br><br><strong>Q2 (Empirical):</strong> Does EDL's output reliably discriminate ID from OOD data? Answer: Partially yes, with important caveats — see Phase 2.<br><br><strong>Q3 (Deployment):</strong> Is EDL's signal sufficient for the confidence-gated routing architecture? This requires settling Q2 first, then applying a domain-specific reliability threshold.</p>
+    </div>
+    <p>The prior analysis conflated Q1 and Q2, effectively arguing "Q1 is true, therefore Q2 is true." Shen et al. correctly break this link. But Agent S also risks an overcorrection: arguing "Q1 is false, therefore Q2 is false" is also a non-sequitur. These questions must be answered independently. Phase 2 does exactly that.</p>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     PHASE 2: EMPIRICAL EVIDENCE
+═══════════════════════════════════════════ -->
+<div class="phase">
+  <span class="phase-num">PHASE 2</span>
+  <span class="phase-title">The Empirical Record — What the Numbers Actually Show</span>
+  <div class="phase-line"></div>
+</div>
+
+<div class="agent-card skeptic">
+  <div class="agent-label">
+    <div class="agent-avatar">S</div>
+    <span class="agent-name">Agent S</span>
+    <span class="agent-role">— Empirical critique</span>
+  </div>
+  <div class="agent-body">
+    <p>I want to engage honestly with the empirical data because this is where Agent D's position has genuine strength. The paper's own results (Figures 3 and 4, Tables 2–4) show that classical EDL methods like BM and PostNet achieve respectable OOD detection performance on CIFAR10. Let me walk through what the data actually says — and then identify where it starts to fall apart.</p>
+
+    <div class="data-panel">
+      <div class="dp-title">OOD Detection AUROC — CIFAR10 (from Shen et al. Table 2, Dent metric)</div>
+      <div class="data-row"><span class="method">Bootstrap Distill (proposed)</span><span class="score hi">97.8 / 94.3 / 87.6 / 98.4</span></div>
+      <div class="data-row"><span class="method">BM (classical EDL)</span><span class="score mid">97.0 / 93.3 / 87.7 / 98.3</span></div>
+      <div class="data-row"><span class="method">EDL (classical)</span><span class="score mid">96.5 / 90.3 / 86.9 / 98.8</span></div>
+      <div class="data-row"><span class="method">PostNet (density)</span><span class="score mid">95.5 / 90.6 / 86.8 / 97.8</span></div>
+      <div class="data-row"><span class="method">RPriorNet (OOD-dependent)</span><span class="score lo">77.6 / 82.7 / 77.4 / 81.3</span></div>
+      <div class="data-row"><span class="method">NatPN</span><span class="score lo">67.0 / 60.6 / 54.6 / 69.7</span></div>
+      <div style="font-size:0.72rem;color:var(--ink4);margin-top:0.5rem">Columns: SVHN / FMNIST / TImageNet / Corrupted</div>
+    </div>
+
+    <p>On CIFAR10, I concede that BM and EDL are within statistical noise of Bootstrap Distill. Agent D's argument has empirical traction here. But watch what happens when we move to CIFAR100 — a harder, more realistic setting with more classes and more ambiguous inter-class boundaries:</p>
+
+    <div class="data-panel">
+      <div class="dp-title">OOD Detection AUROC — CIFAR100 (harder, more realistic)</div>
+      <div class="data-row"><span class="method">Bootstrap Distill (proposed)</span><span class="score hi">85.6 / 86.8 / 84.1 / 68.1</span></div>
+      <div class="data-row"><span class="method">END2 (distillation)</span><span class="score hi">82.0 / 85.0 / 83.2 / 73.4</span></div>
+      <div class="data-row"><span class="method">PostNet</span><span class="score mid">79.4 / 74.7 / 72.0 / 55.5</span></div>
+      <div class="data-row"><span class="method">BM (classical EDL)</span><span class="score lo">68.5 / 74.2 / 70.2 / 58.6</span></div>
+      <div class="data-row"><span class="method">EDL (classical)</span><span class="score lo">68.2 / 74.4 / 73.5 / 49.9</span></div>
+      <div class="data-row"><span class="method">NatPN</span><span class="score lo">64.7 / 47.0 / 49.6 / 57.0</span></div>
+      <div style="font-size:0.72rem;color:var(--ink4);margin-top:0.5rem">Columns: SVHN / FMNIST / TImageNet / Corrupted</div>
+    </div>
+
+    <p><strong>On CIFAR100, the classical EDL methods lose 10–20 AUROC points compared to distillation-based methods.</strong> BM drops to 68.5 on SVHN; NatPN collapses to 47.0 on FMNIST — near random. This is the more important result for the deployment argument, because CIFAR100's distribution complexity is a closer analogue to real business domains (clinical notes, legal documents, financial reports) than CIFAR10. If EDL degrades on harder distributions, the confidence-gated routing architecture becomes unreliable precisely in the settings where it matters most.</p>
+
+    <div class="claim-box finding">
+      <div class="cb-label">Empirical Charge — Distribution-Dependent Reliability</div>
+      <p>Classical EDL methods show competitive performance on simple distributions (CIFAR10) but deteriorate significantly on more complex ones (CIFAR100). Real business domains are CIFAR100-like, not CIFAR10-like. The prior analysis's deployment recommendation was implicitly based on the easier regime.</p>
+    </div>
+
+    <p>There is a second empirical problem: hyperparameter sensitivity. Figure 2 of Shen et al. shows that OOD detection AUROC varies dramatically with λ — sometimes by 20+ points across the λ range tested. <strong>If the system's reliability depends this heavily on a hyperparameter choice, it cannot be deployed reliably in a high-stakes context where calibration data is scarce.</strong></p>
+  </div>
+</div>
+
+<div class="exchange-thread">
+  <div class="agent-card defender">
+    <div class="agent-label">
+      <div class="agent-avatar">D</div>
+      <span class="agent-name">Agent D</span>
+      <span class="agent-role">— Empirical response and counter-evidence</span>
+    </div>
+    <div class="agent-body">
+      <p>Agent S's CIFAR100 argument is the strongest in this debate, and I want to engage with it honestly rather than dismiss it. The performance gap on CIFAR100 is real and relevant. But I want to make three responses that I believe significantly modulate the force of this charge.</p>
+
+      <p><strong>First response — the comparison baseline matters.</strong> The paper compares classical EDL to distillation-based methods and shows distillation wins on CIFAR100. But neither Agent S nor the original analysis advocated for classical EDL as the final answer. The distillation-based path — Bootstrap Distill, EnD2, S2D — is <em>part of the EDL framework family</em>. Bootstrap Distill is an EDL method with proper model uncertainty incorporated. The paper's own proposed solution is an EDL method. The critique is not "EDL is wrong"; it is "classical single-model EDL is insufficient; you need to add model uncertainty." That is a refinement, not a refutation.</p>
+
+      <div class="claim-box rebuttal">
+        <div class="cb-label">Counter-Evidence — Bootstrap Distill Achieves Best-in-Class</div>
+        <p>Bootstrap Distill achieves 85.6 / 86.8 / 84.1 on CIFAR100 (SVHN / FMNIST / TImageNet) — outperforming every baseline including all classical EDL methods AND the older distillation methods. Crucially, it also shows monotonically decreasing epistemic uncertainty with sample size (Figure 13), the property classical EDL lacks. This is an EDL-framework solution to an EDL-framework problem.</p>
+      </div>
+
+      <p><strong>Second response — selective classification tells a different story.</strong> Agent S has focused on OOD detection. But the original analysis's deployment architecture also cares about <em>selective classification</em> — knowing when a prediction on an in-distribution input is likely to be wrong. Table 4 of Shen et al. shows a markedly different picture here:</p>
+
+      <div class="data-panel">
+        <div class="dp-title">Selective Classification AUROC — CIFAR100 (Table 4)</div>
+        <div class="data-row"><span class="method">Bootstrap Distill</span><span class="score hi">83.2 (Ent) / 85.7 (MaxP)</span></div>
+        <div class="data-row"><span class="method">Fisher-EDL</span><span class="score hi">85.8 (Ent) / 86.1 (MaxP)</span></div>
+        <div class="data-row"><span class="method">EDL</span><span class="score mid">84.5 (Ent) / 84.9 (MaxP)</span></div>
+        <div class="data-row"><span class="method">S2D</span><span class="score mid">83.4 (Ent) / 84.4 (MaxP)</span></div>
+        <div class="data-row"><span class="method">BM</span><span class="score lo">81.8 (Ent) / 82.6 (MaxP)</span></div>
+        <div style="font-size:0.72rem;color:var(--ink4);margin-top:0.5rem">Selective classification = identifying incorrectly predicted samples</div>
+      </div>
+
+      <p>On selective classification — which more directly maps to the routing use case in the prior analysis (identifying outputs that should be flagged for human review) — <strong>classical EDL (Fisher-EDL and EDL) achieves the highest or near-highest performance</strong>. Fisher-EDL at 85.8/86.1 outperforms Bootstrap Distill. The theoretical problems with EDL's uncertainty do not translate to practical problems in identifying unreliable predictions on in-distribution data. This is a crucial distinction: OOD detection and selective classification are two different downstream tasks, and the prior analysis's routing system primarily cares about the latter for the auto-pass / escalate decision.</p>
+
+      <p><strong>Third response — hyperparameter sensitivity is manageable in deployment.</strong> Agent S correctly notes λ sensitivity. But in real deployment contexts, model teams have access to labeled calibration data for their specific domain. Tuning λ on this calibration set is standard model deployment practice, not an exceptional burden. The paper recommends using small λ values for OOD performance — that is actionable guidance, not a blocker.</p>
+    </div>
+  </div>
+</div>
+
+<div class="agent-card collab">
+  <div class="agent-label">
+    <div class="agent-avatar">S+D</div>
+    <span class="agent-name">Joint Note</span>
+    <span class="agent-role">— Agents S and D reach a provisional shared finding</span>
+  </div>
+  <div class="agent-body">
+    <p>After reviewing each other's empirical arguments, Agents S and D agree to the following provisional factual claims, which Agent J may incorporate into adjudication:</p>
+    <div class="claim-box synthesis">
+      <div class="cb-label">Jointly Agreed Empirical Facts</div>
+      <p>
+        1. Classical EDL (single-model Dirichlet) performs well on simple distributions but degrades meaningfully on complex ones, particularly on OOD detection for CIFAR100.<br><br>
+        2. Distillation-based EDL (especially Bootstrap Distill) largely closes this gap and additionally recovers the theoretical property of vanishing epistemic uncertainty.<br><br>
+        3. On the <em>selective classification task</em> — arguably closer to business deployment needs than OOD detection — classical EDL methods remain competitive, with Fisher-EDL among the top performers.<br><br>
+        4. The λ hyperparameter sensitivity is real, directional (smaller λ is better), and manageable with proper calibration data.<br><br>
+        5. The prior analysis's recommendation was implicitly for classical EDL. A revised recommendation should specify distillation-based EDL (Bootstrap Distill or EnD2) for the OOD detection component, while noting classical EDL may remain adequate for selective classification routing.
+      </p>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     PHASE 3: DEPLOYMENT IMPLICATIONS
+═══════════════════════════════════════════ -->
+<div class="phase">
+  <span class="phase-num">PHASE 3</span>
+  <span class="phase-title">Practical Implications — What Should Actually Change</span>
+  <div class="phase-line"></div>
+</div>
+
+<div class="agent-card skeptic">
+  <div class="agent-label">
+    <div class="agent-avatar">S</div>
+    <span class="agent-name">Agent S</span>
+    <span class="agent-role">— Deployment-layer critique</span>
+  </div>
+  <div class="agent-body">
+    <p>Given our jointly agreed empirical findings, I want to crystallize what I believe are the non-negotiable revisions to any deployment recommendation that invokes EDL as a safety mechanism for LLMs in high-stakes contexts.</p>
+
+    <p><strong>The auditability problem is not resolved by good AUROC scores.</strong> The prior analysis correctly identified regulatory auditability as a key requirement for healthcare, legal, and financial contexts. EDL's vacuity score was presented as an interpretable signal: "vacuity directly measures epistemic uncertainty." Shen et al. demonstrate this interpretation is incorrect. If a regulatory auditor asks "what does this score mean?" the honest answer is now "it is a free-energy proxy correlated with distribution distance, not a measure of model knowledge." That is a much harder answer to defend in a regulatory proceeding, even if the operational performance is equivalent.</p>
+
+    <div class="claim-box finding">
+      <div class="cb-label">Deployment Charge — The Auditability Gap</div>
+      <p>In regulated industries, audit trails must document not just what the system decided, but on what basis. If the theoretical basis for the uncertainty signal is demonstrably incorrect, the audit trail is weakened even if empirical performance is acceptable. This is an enterprise risk management concern distinct from the pure accuracy question.</p>
+    </div>
+
+    <p><strong>The compound error problem in agentic systems is more serious than originally stated.</strong> The prior analysis noted that uncertainty should be "accumulated across steps" in multi-step agents. But if the step-level uncertainty scores are not properly scaled to epistemic content (which they cannot be, given Theorem 5.1), then the cumulative uncertainty budget has no principled interpretation. You are accumulating a free-energy proxy across steps, not epistemic risk. The compound error dynamics could be qualitatively different from what the framework assumes.</p>
+
+    <p>That said — and I want to be clear about this — I do not believe EDL should be removed from the recommendation. I believe the recommendation requires more precise language and a more specific method selection. Bootstrap Distill addresses the core theoretical deficiency. The routing architecture itself remains sound.</p>
+  </div>
+</div>
+
+<div class="exchange-thread">
+  <div class="agent-card defender">
+    <div class="agent-label">
+      <div class="agent-avatar">D</div>
+      <span class="agent-name">Agent D</span>
+      <span class="agent-role">— Deployment defense and reformulation</span>
+    </div>
+    <div class="agent-body">
+      <p>I want to engage with Agent S's auditability argument directly because I think it conflates two levels of the problem. The first level is: does the system route queries correctly? The second level is: can we explain the routing mechanism to a regulator? These require different things.</p>
+
+      <p>On the first level, the empirical performance data — particularly the selective classification results — suggests EDL-based routing works. On the second level, Agent S is right that the theoretical re-description weakens the explanatory story. But here is my counter: <strong>the EBM reinterpretation actually provides a cleaner regulatory story, not a worse one.</strong> Instead of explaining Dirichlet distributions and vacuity scores to a compliance officer, you can now say: "the system computes a free-energy distance between this input and the distribution of inputs the model was trained on. High distance triggers human review." That is auditable, testable, and intuitively clear. The theoretical demystification helps the regulatory narrative rather than hurting it.</p>
+
+      <div class="claim-box rebuttal">
+        <div class="cb-label">Rebuttal — EBM Reframing Aids Auditability</div>
+        <p>Regulators generally prefer mechanistically clear explanations over Bayesian formalism. "This query is far from the model's training distribution" is a more auditable claim than "vacuity is a measure of epistemic uncertainty in the Dirichlet Bayesian framework." Shen et al.'s recharacterization, if adopted explicitly, makes the routing system more explainable rather than less.</p>
+      </div>
+
+      <p>On the compound error problem in agentic systems: this is Agent S's strongest deployment-layer point and I want to engage with it carefully. The prior analysis proposed accumulating vacuity scores across agent steps as a cumulative "trust debt." If vacuity is a free-energy proxy, not an epistemic signal, then compounding it may not give you what you want. I think the honest answer here is: the compounding architecture needs to be redesigned around the EBM interpretation. Rather than accumulating a pseudo-epistemic uncertainty score, you should track the maximum distribution-distance score across steps (the step most likely to be OOD), and trigger review when any single step exceeds a threshold. This is a cleaner safety guarantee than the cumulative model.</p>
+    </div>
+  </div>
+</div>
+
+<div class="agent-card judge">
+  <div class="agent-label">
+    <div class="agent-avatar">J</div>
+    <span class="agent-name">Agent J</span>
+    <span class="agent-role">— Adjudication of deployment arguments</span>
+  </div>
+  <div class="agent-body">
+    <p>I find Agent D's reframing of the regulatory story genuinely persuasive and worth amplifying. The regulatory argument cuts both ways: yes, claiming "principled epistemic uncertainty" when you cannot deliver it is worse than not claiming it. But openly characterizing the system as a distribution-distance monitor has its own regulatory clarity. The transition from "Bayesian epistemic UQ" to "domain-boundary detection" is a downgrade in theoretical ambition but possibly an upgrade in regulatory defensibility.</p>
+
+    <p>The agentic compounding argument deserves careful treatment. Both agents converged on the same substantive fix — maximum-step rather than cumulative monitoring — but I want to make the logic explicit:</p>
+
+    <div class="claim-box verdict">
+      <div class="cb-label">Adjudicator's Synthesis on Agentic Safety</div>
+      <p>If EDL's per-step signal is a free-energy distance metric, then: (a) a single extreme-distance step is more informative than the average distance across steps, because OOD danger is multiplicative, not additive; (b) the correct aggregation is max(distance) over steps, not sum(distance); (c) this is actually a more conservative and safer design than the original cumulative model, because it triggers on a single problematic step rather than waiting for the budget to accumulate. The theoretical demotion of EDL leads to a safer agentic architecture.</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     PHASE 4: COLLABORATIVE SYNTHESIS
+═══════════════════════════════════════════ -->
+<div class="phase">
+  <span class="phase-num">PHASE 4</span>
+  <span class="phase-title">Collaborative Synthesis — A Revised Recommendation</span>
+  <div class="phase-line"></div>
+</div>
+
+<div class="agent-card collab">
+  <div class="agent-label">
+    <div class="agent-avatar">S+D+J</div>
+    <span class="agent-name">All Three Agents</span>
+    <span class="agent-role">— Joint synthesis</span>
+  </div>
+  <div class="agent-body">
+    <p>After three rounds of exchange, we have arrived at a position that all three agents can endorse with varying emphases. It is neither "EDL is the right tool" (too strong) nor "EDL should be abandoned" (also too strong). It is a differentiated picture that requires the prior analysis to be updated in several specific ways.</p>
+
+    <div class="claim-box synthesis">
+      <div class="cb-label">Joint Finding 1 — The Theoretical Demotion Is Real and Consequential</div>
+      <p>The prior analysis overstated the theoretical basis of EDL's uncertainty. The vacuity score does not measure epistemic uncertainty in any statistically defensible sense. Any deployment recommendation that justifies EDL routing on Bayesian epistemic grounds must be retracted and rewritten. Agent S's charges 1 and 2 stand.</p>
+    </div>
+
+    <div class="claim-box synthesis">
+      <div class="cb-label">Joint Finding 2 — The Practical Utility Is Preserved, but Narrowed</div>
+      <p>EDL's output reliably discriminates in-distribution from out-of-distribution inputs, functioning as an effective energy-based domain-boundary detector. On selective classification (identifying when in-distribution predictions are unreliable), classical EDL methods remain competitive and in some cases best-in-class. The routing architecture survives — reframed as domain-boundary monitoring rather than epistemic uncertainty quantification. Agent D's core defense holds for these specific use cases.</p>
+    </div>
+
+    <div class="claim-box synthesis">
+      <div class="cb-label">Joint Finding 3 — The Method Should Be Upgraded to Bootstrap Distill</div>
+      <p>For deployment in high-stakes business contexts, classical single-model EDL should be replaced with distillation-based EDL (Bootstrap Distill or EnD2). These methods recover the theoretically correct property of vanishing epistemic uncertainty with data, while maintaining competitive OOD detection performance. The additional computational cost (training multiple bootstrap models) is the price of theoretical legitimacy — and given that we are deploying in clinical, legal, or financial contexts, that price should be paid.</p>
+    </div>
+
+    <div class="claim-box synthesis">
+      <div class="cb-label">Joint Finding 4 — The Agentic Architecture Must Be Redesigned</div>
+      <p>The prior analysis's cumulative uncertainty budget model for multi-step agents must be replaced with a maximum-step monitoring model. Because EDL's per-step signal is a distribution-distance proxy (not a probability-space quantity that compounds additively), the conservative and theoretically consistent design is to trigger human review when any individual step exceeds a threshold, not when the sum exceeds a budget. This change makes the agentic architecture safer, not just more theoretically consistent.</p>
+    </div>
+
+    <div class="claim-box synthesis">
+      <div class="cb-label">Joint Finding 5 — The Regulatory Story Changes, but Improves</div>
+      <p>Dropping the Bayesian epistemic framing and adopting explicit EBM/distribution-distance language makes the system's behavior more auditable, not less. "This query exceeds our domain-boundary distance threshold and has been routed to human review" is a defensible regulatory claim. "The model's epistemic uncertainty exceeded its threshold" is a claim that cannot withstand formal scrutiny given Shen et al.'s findings. The reframing is necessary and ultimately beneficial for enterprise deployment narratives.</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     FINAL VERDICT
+═══════════════════════════════════════════ -->
+<div class="final-verdict">
+  <div class="fv-title">Adjudicator's Final Verdict</div>
+
+  <div class="verdict-item">
+    <span class="vi-mark against">✗</span>
+    <span class="vi-text"><strong>Against the original analysis:</strong> The prior article's characterization of EDL vacuity as "a direct, interpretable measure of epistemic uncertainty" is theoretically incorrect and must be revised. Deploying classical single-model EDL in high-stakes contexts while invoking Bayesian epistemic uncertainty language creates a gap between the theoretical claim and the actual mechanism that regulators and auditors may rightfully challenge.</span>
+  </div>
+
+  <div class="verdict-item">
+    <span class="vi-mark for">✓</span>
+    <span class="vi-text"><strong>For the routing architecture:</strong> The three-zone routing system (auto-pass / review queue / escalate) survives the theoretical critique because it does not actually require epistemic uncertainty — it requires a reliable discriminator between "this query is within the model's operating envelope" and "this query is not." EDL's free-energy proxy provides exactly that, particularly for selective classification on in-distribution data.</span>
+  </div>
+
+  <div class="verdict-item">
+    <span class="vi-mark for">✓</span>
+    <span class="vi-text"><strong>For the early exiting mechanism:</strong> Early exiting's utility is independent of whether the exit signal is a true epistemic uncertainty measure. It requires only that the signal at shallow layers be predictive of final-layer confidence — a weaker and empirically supportable property. Early exiting survives the critique intact.</span>
+  </div>
+
+  <div class="verdict-item">
+    <span class="vi-mark against">✗</span>
+    <span class="vi-text"><strong>Against classical EDL for complex domains:</strong> The CIFAR100 results suggest that classical single-model EDL degrades meaningfully on harder distributions. Business domains (legal, clinical, financial) are generically hard distributions. Recommending classical EDL without specifying distillation-based upgrade creates deployment risk at precisely the scale where the system is needed most.</span>
+  </div>
+
+  <div class="verdict-item">
+    <span class="vi-mark nuance">~</span>
+    <span class="vi-text"><strong>Nuanced verdict on theoretical versus practical reliability:</strong> The debate has confirmed that theoretical correctness and practical utility are separable, but the separation has limits. When the theoretical incorrectness propagates into the regulatory narrative, the audit trail, and the compound error dynamics of agentic systems, it creates downstream practical problems. The correct response is not to ignore the theoretical critique but to reground the deployment recommendation in the EBM interpretation, which is both theoretically accurate and practically useful.</span>
+  </div>
+
+  <div class="verdict-item">
+    <span class="vi-mark nuance">→</span>
+    <span class="vi-text"><strong>The net revised recommendation:</strong> Deploy distillation-based EDL (Bootstrap Distill) for the UQ component of the confidence-gated routing architecture. Describe the system explicitly as a domain-boundary distance monitor, not a Bayesian epistemic uncertainty quantifier. Use maximum-step (not cumulative) monitoring in agentic pipelines. Retain early exiting. The overall architecture of the prior analysis is sound; the theoretical grounding and method selection require revision.</span>
+  </div>
+</div>
+
+<p class="footnote">
+  Primary evidence: Shen, Ryu, Ghosh, Bu, Sattigeri, Das, Wornell — "Are Uncertainty Quantification Capabilities of Evidential Deep Learning a Mirage?" NeurIPS 2024 · Sensoy, Kaplan, Kandemir — "Evidential Deep Learning to Quantify Classification Uncertainty" NeurIPS 2018 · Liu, Wang, Owens, Li — "Energy-Based Out-of-Distribution Detection" NeurIPS 2020 · Malinin, Mlodozeniec, Gales — "Ensemble Distribution Distillation" ICLR 2020 · Jürgens, Meinert, Bengs, Hüllermeier, Waegeman — "Is Epistemic Uncertainty Faithfully Represented by Evidential Deep Learning Methods?" arXiv 2402.09056.
+</p>
+
+</body>
+</html>
