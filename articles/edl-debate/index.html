@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>EDL Debate: Uncertainty Quantification in Question</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap');
 
 :root {
   --bg: #f5f3ee;
@@ -43,53 +43,105 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  font-family: 'Instrument Sans', system-ui, sans-serif;
+  font-family: 'DM Sans', system-ui, sans-serif;
   background: var(--bg);
   color: var(--ink);
-  font-size: 15px;
-  line-height: 1.7;
-  max-width: 900px;
+  font-size: 16px;
+  line-height: 1.75;
+  max-width: 860px;
   margin: 0 auto;
   padding: 3rem 2rem 6rem;
 }
 
-/* ── HEADER ── */
-.page-header {
-  border-bottom: 2px solid var(--ink);
-  padding-bottom: 2rem;
-  margin-bottom: 3rem;
-}
-.page-tag {
-  font-size: 0.68rem;
-  font-weight: 600;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--ink4);
-  margin-bottom: 0.75rem;
+.top-nav {
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
-.page-tag::before {
-  content: '';
-  display: inline-block;
-  width: 20px;
-  height: 1.5px;
-  background: var(--ink4);
+.top-nav a {
+  color: var(--ink3);
+  text-decoration: none;
+  transition: color 160ms ease;
+}
+.top-nav a:hover { color: var(--ink); }
+.top-nav .series { color: var(--ink4); }
+
+/* ── HEADER ── */
+.page-header {
+  border-bottom: 1.5px solid var(--ink);
+  padding-bottom: 2rem;
+  margin-bottom: 2.5rem;
+}
+.page-tag {
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--defender-mid);
+  margin-bottom: 1rem;
+  display: block;
 }
 h1 {
-  font-family: 'Instrument Serif', Georgia, serif;
-  font-size: 2.4rem;
+  font-family: 'DM Serif Display', Georgia, serif;
+  font-size: 2.6rem;
   line-height: 1.15;
   font-weight: 400;
   letter-spacing: -0.01em;
 }
 .page-sub {
-  font-size: 0.95rem;
+  font-size: 1.1rem;
   color: var(--ink3);
-  margin-top: 0.6rem;
+  font-weight: 300;
+  margin-top: 0.75rem;
   max-width: 650px;
-  line-height: 1.6;
+  line-height: 1.55;
+}
+.author-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+  margin-bottom: 0.2rem;
+  flex-wrap: wrap;
+}
+.author {
+  font-size: 1rem;
+  color: var(--ink);
+  margin: 0;
+}
+.author-links {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+.author-links a {
+  color: var(--ink3);
+  display: inline-flex;
+  align-items: center;
+  transition: color 160ms ease;
+}
+.author-links a:hover { color: var(--ink); }
+.author-links svg {
+  width: 17px;
+  height: 17px;
+  display: block;
+}
+.meta {
+  font-size: 0.78rem;
+  color: var(--ink4);
+  margin-top: 1.5rem;
+  border-top: 0.5px solid var(--border);
+  padding-top: 0.75rem;
+}
+.article-signoff {
+  margin-top: 1.6rem;
+  padding-top: 1rem;
+  border-top: 0.5px solid var(--border);
 }
 .agent-legend {
   display: flex;
@@ -119,7 +171,7 @@ h1 {
   margin: 3rem 0 1.5rem;
 }
 .phase-num {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'DM Mono', monospace;
   font-size: 0.7rem;
   font-weight: 500;
   color: var(--ink4);
@@ -129,7 +181,7 @@ h1 {
   white-space: nowrap;
 }
 .phase-title {
-  font-family: 'Instrument Serif', serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 1.35rem;
   font-weight: 400;
   color: var(--ink);
@@ -207,7 +259,7 @@ h1 {
 
 .agent-body p {
   color: var(--ink2);
-  font-size: 0.925rem;
+  font-size: 0.95rem;
   margin-bottom: 0.85rem;
 }
 .agent-body p:last-child { margin-bottom: 0; }
@@ -217,7 +269,7 @@ h1 {
 /* ── CITATION PILLS ── */
 .cite {
   display: inline-block;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'DM Mono', monospace;
   font-size: 0.68rem;
   font-weight: 500;
   padding: 1px 6px;
@@ -272,7 +324,7 @@ h1 {
   border-radius: 5px;
   padding: 0.75rem 1rem;
   margin: 0.75rem 0;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'DM Mono', monospace;
   font-size: 0.8rem;
   color: var(--ink);
   line-height: 1.6;
@@ -315,7 +367,7 @@ h1 {
 }
 .data-row:last-child { border-bottom: none; }
 .data-row .method { color: var(--ink2); font-weight: 500; }
-.data-row .score { font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; }
+.data-row .score { font-family: 'DM Mono', monospace; font-size: 0.82rem; }
 .score.hi { color: var(--judge-mid); font-weight: 600; }
 .score.lo { color: var(--skeptic-mid); }
 .score.mid { color: var(--defender-mid); }
@@ -329,7 +381,7 @@ h1 {
   background: var(--judge-bg);
 }
 .fv-title {
-  font-family: 'Instrument Serif', serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 1.25rem;
   font-weight: 400;
   color: var(--judge);
@@ -383,20 +435,50 @@ hr.section-div {
 
 @media (max-width: 600px) {
   body { padding: 1.25rem 1rem 4rem; }
-  h1 { font-size: 1.75rem; }
+  h1 { font-size: 1.9rem; }
   .agent-legend { gap: 0.75rem; }
 }
 </style>
 </head>
 <body>
 
+<div class="top-nav">
+  <a href="/RyuKakuta.github.io/#articles">Back to Portfolio</a>
+  <span class="series">Article Series</span>
+</div>
+
 <!-- ══════════════════════════════════════════
      PAGE HEADER
 ═══════════════════════════════════════════ -->
 <div class="page-header">
-  <div class="page-tag">Structured Academic Debate · Three-Agent Framework</div>
+  <div class="page-tag">Technical Debate · AI Systems Engineering</div>
   <h1>Are EDL's Uncertainty Claims a Mirage?</h1>
   <p class="page-sub">A collegial multi-agent debate on whether Evidential Deep Learning constitutes genuine uncertainty quantification or a well-functioning OOD detector in disguise — and what this means for real-world deployment of LLM-based systems.</p>
+  <div class="author-row">
+    <p class="author">Ryu Kakuta</p>
+    <div class="author-links">
+      <a href="https://www.linkedin.com/in/kakury/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+          <rect width="4" height="12" x="2" y="9"></rect>
+          <circle cx="4" cy="4" r="2"></circle>
+        </svg>
+      </a>
+      <a href="mailto:kakuryu555@gmail.com" aria-label="Email">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect width="20" height="16" x="2" y="4" rx="2"></rect>
+          <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+        </svg>
+      </a>
+      <a href="https://github.com/mid9t" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path>
+          <path d="M9 18c-4.51 2-5-2-7-2"></path>
+        </svg>
+      </a>
+    </div>
+  </div>
+  <p class="meta">Topics covered: EDL theory critique · OOD detection versus epistemic uncertainty · Agentic safety design · Regulatory auditability · Distillation-based upgrades</p>
 
   <div class="agent-legend">
     <div class="legend-item"><div class="legend-dot" style="background:var(--skeptic-mid)"></div>Agent S — The Skeptic</div>
@@ -815,6 +897,31 @@ hr.section-div {
 <p class="footnote">
   Primary evidence: Shen, Ryu, Ghosh, Bu, Sattigeri, Das, Wornell — "Are Uncertainty Quantification Capabilities of Evidential Deep Learning a Mirage?" NeurIPS 2024 · Sensoy, Kaplan, Kandemir — "Evidential Deep Learning to Quantify Classification Uncertainty" NeurIPS 2018 · Liu, Wang, Owens, Li — "Energy-Based Out-of-Distribution Detection" NeurIPS 2020 · Malinin, Mlodozeniec, Gales — "Ensemble Distribution Distillation" ICLR 2020 · Jürgens, Meinert, Bengs, Hüllermeier, Waegeman — "Is Epistemic Uncertainty Faithfully Represented by Evidential Deep Learning Methods?" arXiv 2402.09056.
 </p>
+
+<div class="author-row article-signoff">
+  <p class="author">Ryu Kakuta <span class="meta" style="display:inline; margin-top:0; border-top:none; padding-top:0; margin-left:0.45rem;">March 28, 2026</span></p>
+  <div class="author-links">
+    <a href="https://www.linkedin.com/in/kakury/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+        <rect width="4" height="12" x="2" y="9"></rect>
+        <circle cx="4" cy="4" r="2"></circle>
+      </svg>
+    </a>
+    <a href="mailto:kakuryu555@gmail.com" aria-label="Email">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect width="20" height="16" x="2" y="4" rx="2"></rect>
+        <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+      </svg>
+    </a>
+    <a href="https://github.com/mid9t" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path>
+        <path d="M9 18c-4.51 2-5-2-7-2"></path>
+      </svg>
+    </a>
+  </div>
+</div>
 
 </body>
 </html>
