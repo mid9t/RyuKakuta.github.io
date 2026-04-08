@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EDL Robustness &amp; Metrics</title>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,600;0,6..72,700;1,6..72,400&family=IBM+Plex+Mono:wght@400;500&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f3ee;
+    --surface: #ffffff;
+    --text: #1e1e1c;
+    --text-muted: #6e6a60;
+    --accent: #c2410c;
+    --accent-bg: #fff7ed;
+    --accent-border: #fed7aa;
+    --blue: #1d4ed8;
+    --blue-bg: #eff6ff;
+    --blue-border: #bfdbfe;
+    --green: #15803d;
+    --green-bg: #f0fdf4;
+    --green-border: #bbf7d0;
+    --red: #b91c1c;
+    --red-bg: #fef2f2;
+    --red-border: #fecaca;
+    --purple: #7c3aed;
+    --purple-bg: #f5f3ff;
+    --purple-border: #ddd6fe;
+    --border: #ddd8cd;
+    --code-bg: #edebe5;
+    --nav-width: 270px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Newsreader', Georgia, serif;
+    font-size: 17px;
+    line-height: 1.75;
+    color: var(--text);
+    background: var(--bg);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* --- SIDEBAR NAV --- */
+  aside {
+    position: fixed;
+    top: 0; left: 0;
+    width: var(--nav-width);
+    height: 100vh;
+    overflow-y: auto;
+    padding: 2rem 1.2rem 2rem 1.5rem;
+    border-right: 1px solid var(--border);
+    background: var(--bg);
+    z-index: 20;
+  }
+  aside .logo {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+  }
+  aside .nav-group { margin-bottom: 1rem; }
+  aside .nav-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 0.35rem;
+  }
+  aside a {
+    display: block;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--text-muted);
+    text-decoration: none;
+    padding: 0.25rem 0 0.25rem 0.6rem;
+    border-left: 2px solid transparent;
+    transition: all 0.15s;
+  }
+  aside a:hover {
+    color: var(--accent);
+    border-left-color: var(--accent);
+  }
+
+  /* --- MAIN --- */
+  main {
+    margin-left: var(--nav-width);
+    max-width: 760px;
+    padding: 3rem 2.5rem 6rem;
+  }
+
+  /* --- HEADER --- */
+  header {
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.8rem;
+    border-bottom: 3px solid var(--text);
+  }
+  header h1 {
+    font-size: 2.4rem;
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+  }
+  header .part-labels {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.7rem;
+  }
+  .part-tag {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.2em 0.65em;
+    border-radius: 3px;
+  }
+  .part-tag.robustness { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); }
+  .part-tag.metrics { background: var(--blue-bg); color: var(--blue); border: 1px solid var(--blue-border); }
+
+  /* --- TYPOGRAPHY --- */
+  h2 {
+    font-size: 1.45rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin: 2.8rem 0 0.5rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid var(--border);
+  }
+  h2:first-of-type { border-top: none; padding-top: 0; }
+
+  h3 {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text);
+    margin: 1.5rem 0 0.4rem;
+  }
+  h4 {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin: 1.3rem 0 0.3rem;
+  }
+
+  p { margin-bottom: 0.85rem; }
+
+  strong { font-weight: 600; }
+
+  /* --- CALLOUT BOXES --- */
+  .callout {
+    padding: 0.9rem 1.15rem;
+    margin: 1.2rem 0;
+    border-radius: 5px;
+    border-left: 4px solid;
+    font-size: 0.95rem;
+  }
+  .callout.warn { background: var(--accent-bg); border-color: var(--accent); }
+  .callout.info { background: var(--blue-bg); border-color: var(--blue); }
+  .callout.success { background: var(--green-bg); border-color: var(--green); }
+  .callout.purple { background: var(--purple-bg); border-color: var(--purple); }
+  .callout .callout-title {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-bottom: 0.3rem;
+  }
+  .callout.warn .callout-title { color: var(--accent); }
+  .callout.info .callout-title { color: var(--blue); }
+  .callout.success .callout-title { color: var(--green); }
+  .callout.purple .callout-title { color: var(--purple); }
+
+  /* --- LISTS --- */
+  ul, ol {
+    margin: 0.5rem 0 0.9rem 1.4rem;
+    line-height: 1.7;
+  }
+  li { margin-bottom: 0.3rem; }
+  li ul, li ol { margin-top: 0.2rem; margin-bottom: 0.2rem; }
+
+  /* --- MATH / FORMULAS --- */
+  .formula {
+    display: block;
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.6rem 1rem;
+    margin: 0.8rem 0;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.85rem;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  /* --- CODE --- */
+  code {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.84em;
+    background: var(--code-bg);
+    padding: 0.1em 0.35em;
+    border-radius: 3px;
+  }
+
+  /* --- TABLES --- */
+  .table-wrap { overflow-x: auto; margin: 1.2rem 0; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+  th {
+    font-family: 'DM Sans', sans-serif;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 0.5rem 0.7rem;
+    border-bottom: 2px solid var(--text);
+  }
+  td {
+    padding: 0.5rem 0.7rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  tr:last-child td { border-bottom: none; }
+
+  /* --- PHASE TAGS --- */
+  .phase {
+    font-family: 'DM Sans', sans-serif;
+    display: inline-block;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    padding: 0.15em 0.5em;
+    border-radius: 3px;
+    text-transform: uppercase;
+  }
+  .phase-1 { background: #dbeafe; color: #1e40af; }
+  .phase-2 { background: #d1fae5; color: #065f46; }
+  .phase-3 { background: #fef3c7; color: #92400e; }
+  .phase-4 { background: #fce7f3; color: #9d174d; }
+  .phase-5 { background: #ede9fe; color: #5b21b6; }
+
+  /* --- SECTION DIVIDER --- */
+  .part-divider {
+    margin: 3.5rem 0 2.5rem;
+    padding: 1rem 0;
+    border-top: 3px solid var(--text);
+    border-bottom: 1px solid var(--border);
+  }
+  .part-divider h2 {
+    border: none;
+    padding: 0;
+    margin: 0;
+    font-size: 1.6rem;
+  }
+  .part-divider .part-sub {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-top: 0.2rem;
+  }
+
+  /* --- RESPONSIVE --- */
+  @media (max-width: 960px) {
+    aside { display: none; }
+    main { margin-left: 0; padding: 2rem 1.2rem 4rem; }
+    header h1 { font-size: 1.7rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside>
+  <div class="logo">EDL Reference</div>
+
+  <div class="nav-group">
+    <div class="nav-label">Part A — Robustness</div>
+    <a href="#math">1. Mathematical Approach</a>
+    <a href="#datasets">2. Datasets &amp; Anchors</a>
+    <a href="#vulnerabilities">3. Vulnerabilities</a>
+    <a href="#solutions">4. Potential Solutions</a>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-label">Part B — Inference</div>
+    <a href="#hard-truth">The Hard Truth</a>
+    <a href="#comparison">UQ Method Comparison</a>
+    <a href="#advantages">Advantages</a>
+    <a href="#failure-modes">Failure Modes</a>
+    <a href="#robust-recommendations">Making It Robust</a>
+    <a href="#feasibility">Feasibility</a>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-label">Metrics</div>
+    <a href="#what-measuring">0. What We're Measuring</a>
+    <a href="#output-param">1. Output Parameterization</a>
+    <a href="#metric-inventory">2. Metric Inventory</a>
+    <a href="#gating-choice">3. Gating Choice</a>
+    <a href="#epi-vs-alea">4. Epi vs Alea in Practice</a>
+    <a href="#phases">5. Step-by-Step Process</a>
+    <a href="#deliverable">Deliverable Summary</a>
+  </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main>
+
+<header>
+  <h1>EDL Robustness &amp; Metrics</h1>
+  <div class="part-labels">
+    <span class="part-tag robustness">Robustness</span>
+    <span class="part-tag metrics">Metrics</span>
+  </div>
+</header>
+
+<!-- ============================================================ -->
+<!-- PART A: ROBUSTNESS FINDINGS -->
+<!-- ============================================================ -->
+
+<h2 id="math">1. Mathematical Approach — What EDL Is</h2>
+
+<p><strong>Core idea:</strong> Replace a point-probability head (e.g., softmax) with a <em>distribution over probabilities</em>.</p>
+
+<h3>Classification (Dirichlet EDL)</h3>
+<p>The network outputs non-negative "evidence" <code>e ∈ ℝ₊ᴷ</code>, mapped to Dirichlet concentration parameters:</p>
+<div class="formula">αₖ = eₖ + 1</div>
+<p>From total concentration <code>S = Σₖ αₖ</code>, you get:</p>
+<ul>
+  <li><strong>Mean prediction:</strong> <code>E[pₖ] = αₖ / S</code></li>
+  <li><strong>Belief mass:</strong> <code>bₖ = (αₖ − 1) / S</code></li>
+  <li><strong>Vacuity / uncertainty:</strong> <code>u = K / S</code> — high <em>u</em> = low evidence = "I'm ignorant"</li>
+</ul>
+
+<h3>Regression (NIG EDL)</h3>
+<p>The network outputs Normal–Inverse–Gamma parameters (γ, ν, α, β), giving:</p>
+<ul>
+  <li><strong>Aleatoric (data) variance:</strong> <code>E[σ²] = β / (α − 1)</code></li>
+  <li><strong>Epistemic (mean) variance:</strong> <code>Var(μ) = β / (ν(α − 1))</code></li>
+</ul>
+
+<h3>Training Objective</h3>
+<p>A <strong>data-fit term</strong> (e.g., MSE / Bayes-risk / NLL on Dirichlet mean) plus a <strong>KL regularizer</strong> pulling toward a non-informative Dirichlet prior (often uniform), typically with annealing schedules for stability/calibration.</p>
+
+<!-- DATASETS -->
+<h2 id="datasets">2. Datasets &amp; Empirical Anchors</h2>
+<ul>
+  <li><strong>MNIST → FashionMNIST</strong> under L₂-PGD adversarial attacks (ε = 1.0)</li>
+  <li><strong>CIFAR-10 → SVHN</strong> as an OOD transfer case with large coverage reduction under C-EDL</li>
+  <li>Improved accuracy on <strong>CIFAR-100</strong> for certain variants (e.g., F-EDL)</li>
+</ul>
+
+<!-- VULNERABILITIES -->
+<h2 id="vulnerabilities">3. Vulnerabilities &amp; Limitations</h2>
+
+<div class="callout warn">
+  <div class="callout-title">Key Warning</div>
+  Vanilla EDL can still be overconfident on adversarial/OOD inputs — adversarial or far-OOD samples can induce high Dirichlet strength <em>S</em> (low <em>u</em>), producing spurious confidence.
+</div>
+
+<p>Deeper issues flagged:</p>
+<ul>
+  <li><strong>Distance insensitivity:</strong> Uncertainty may not increase reliably as inputs move away from the training distribution unless you add density awareness.</li>
+  <li><strong>Uncertainty entanglement / bias:</strong> "Evidential signal" (vacuity/strength) can correlate with misclassification behavior and confound epistemic vs aleatoric uncertainty, especially with KL regularization.</li>
+  <li><strong>Theoretical concern:</strong> Some analyses suggest standard EDL objectives can yield non-vanishing epistemic uncertainty even with infinite data — violating the Bayesian desideratum that epistemic uncertainty should collapse with enough data.</li>
+</ul>
+
+<!-- SOLUTIONS -->
+<h2 id="solutions">4. Potential Solutions — What's Fixing EDL</h2>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Variant</th><th>Mechanism</th><th>Effect</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>C-EDL</strong></td>
+      <td>Label-preserving "metamorphic" transforms → measure representational disagreement → decay evidence by conflict</td>
+      <td>Sharply reduces adversarial/OOD "coverage" (fewer bad inputs pass as confident)</td>
+    </tr>
+    <tr>
+      <td><strong>DAEDL</strong></td>
+      <td>Scale logits by feature-space density estimate <em>s(x)</em> (e.g., Gaussian discriminant analysis)</td>
+      <td>Far-OOD points drive toward uniform predictions and higher uncertainty</td>
+    </tr>
+    <tr>
+      <td><strong>F-EDL</strong></td>
+      <td>Mixture-like "Flexible Dirichlet" for multimodal uncertainty</td>
+      <td>Improved robustness under noise / long-tail conditions</td>
+    </tr>
+    <tr>
+      <td><strong>Re-EDL</strong></td>
+      <td>Remove parts of classical loss (e.g., drop variance regularization / KL), expose prior weight as tunable hyperparameter</td>
+      <td>Reduced tuning complexity</td>
+    </tr>
+    <tr>
+      <td><strong>MPC</strong></td>
+      <td>Policy network dynamically adapts calibration hyperparameters (like KL weight) via bi-level optimization</td>
+      <td>Dynamic calibration under distribution shift</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<!-- ============================================================ -->
+<!-- PART B: INFERENCE FOR EARLY-EXIT CROSS-ENCODER -->
+<!-- ============================================================ -->
+
+<div class="part-divider">
+  <h2>Inference for Early-Exit Cross-Encoder Ranker</h2>
+  <div class="part-sub">Model robustness assessment for compute-gated ranking</div>
+</div>
+
+<div class="callout warn" id="hard-truth">
+  <div class="callout-title">The Hard Truth</div>
+  EDL's "single forward pass uncertainty" is attractive for latency, but vanilla EDL uncertainty is <strong>not automatically robust enough</strong> to be your sole governor of compute — especially in retrieval where OOD, adversarial SEO spam, and "linguistically plausible but wrong" docs are common.<br><br>
+  Robustness depends on <strong>which EDL variant + what training protocol + what gating policy</strong>.
+</div>
+
+<h2 id="comparison">UQ Method Comparison</h2>
+
+<h3>1. Deep Ensembles / MC Dropout / Laplace</h3>
+<ul>
+  <li><strong>Advantage vs EDL:</strong> Often more faithful epistemic signal in practice, less fragile to objective-function pathologies.</li>
+  <li><strong>Disadvantage vs EDL:</strong> Expensive at inference — bad fit for trillion-scale reranking unless applied to a tiny tail.</li>
+  <li><strong>Implication:</strong> Ensembles are great <em>teachers</em> (for distillation) but expensive at runtime.</li>
+</ul>
+
+<h3>2. Conformal Prediction / Selective Prediction</h3>
+<ul>
+  <li><strong>Advantage:</strong> Explicit error-control framing ("I will abstain when risk is high").</li>
+  <li><strong>Disadvantage:</strong> Guarantees degrade when traffic is non-exchangeable (web is… non-exchangeable).</li>
+  <li><strong>Implication:</strong> Can serve as a calibration layer over uncertainty/gating, but not a full solution.</li>
+</ul>
+
+<h3>3. Prior/Posterior Networks, Generative OOD Detectors</h3>
+<ul>
+  <li>Explicitly model OOD separation more directly than vanilla EDL, but add complexity.</li>
+  <li>Disentangling epistemic vs aleatoric often needs explicit OOD supervision or generative augmentation.</li>
+</ul>
+
+<!-- ADVANTAGES -->
+<h2 id="advantages">Advantages of EDL-Gated Early Exit</h2>
+<div class="callout success">
+  <div class="callout-title">Why This Works</div>
+  <ol>
+    <li><strong>Compute elasticity with one pass per exit:</strong> EDL uncertainty is computed from the same forward pass; no sampling loops required.</li>
+    <li><strong>Natural abstention/escalation signal:</strong> Dirichlet strength <em>S</em> / vacuity <em>u</em> is a clean scalar to gate exits.</li>
+    <li><strong>Good fit for the "90% obviously irrelevant" regime:</strong> Many docs are easy negatives; early exits can cut cost dramatically when the uncertainty metric is trustworthy.</li>
+  </ol>
+</div>
+
+<!-- FAILURE MODES -->
+<h2 id="failure-modes">Failure Modes</h2>
+<ol>
+  <li><strong>Adversarial/SEO spam and far-OOD gibberish can look "confident"</strong> to vanilla EDL (high <em>S</em>, low <em>u</em>), causing premature exiting and "hallucination ranking."</li>
+  <li><strong>Epistemic vs aleatoric disentanglement is not free.</strong> In ranking, "gibberish" vs "I don't know" matters; but EDL's uncertainty components can be entangled/bias-prone without the right objectives.</li>
+  <li><strong>Layerwise exit-head calibration drift:</strong> Uncertainty at layer 3 is not the same object as uncertainty at layer 12 unless you explicitly align them.</li>
+</ol>
+
+<!-- ROBUST RECOMMENDATIONS -->
+<h2 id="robust-recommendations">Making It Robust Enough to Govern Compute</h2>
+
+<div class="callout info">
+  <div class="callout-title">Design Principle</div>
+  If your uncertainty is the governor, treat it like a safety-critical subsystem.
+</div>
+
+<h3>1. Don't Use Vanilla EDL — Use a Targeted Variant</h3>
+<ul>
+  <li><strong>DAEDL-style density scaling</strong> (or embedding-space density proxy) so junk/OOD drives toward high uncertainty.</li>
+  <li><strong>C-EDL-style conflict calibration</strong> (transformations) to reduce adversarial/OOD "confident" behavior.</li>
+</ul>
+<p>In text ranking, "metamorphic transforms" could be: light paraphrases, sentence order perturbations, or controlled noise on document passages.</p>
+
+<h3>2. Train Exit Heads with Consistency-to-Final-Layer Objective</h3>
+<p>Instead of "exit if <code>u &lt; τ</code>" alone, make it: "exit if <code>u &lt; τ</code> <strong>and</strong> early score is predicted to match final score within margin." (Example: Confident Adaptive Transformers / CATs.)</p>
+
+<h3>3. Use "Teacher Uncertainty" to Validate EDL Uncertainty</h3>
+<ul>
+  <li><strong>Offline:</strong> Run a small deep ensemble or other strong UQ baseline on a sample of traffic.</li>
+  <li><strong>Train:</strong> EDL heads to match not just labels/ranking loss, but also the teacher's uncertainty ordering.</li>
+</ul>
+<p>This gets ensemble-quality epistemic signals without paying ensemble costs at runtime.</p>
+
+<h3>4. Make Thresholding Risk-Aware, Not Fixed</h3>
+<p>Adapt τ based on query class, vertical, or detected distribution shift (e.g., spike in OOD score).</p>
+
+<!-- FEASIBILITY -->
+<h2 id="feasibility">Feasibility</h2>
+<div class="callout success">
+  <div class="callout-title">Engineering Read</div>
+  Feasible — the main work is <strong>calibration and evaluation</strong>, not "adding heads."
+</div>
+<ul>
+  <li>Adding exit heads at layers 3/6/9 is straightforward.</li>
+  <li>The hard part is building an eval suite that measures: compute saved vs ranking quality (NDCG/MRR), selective risk curves (coverage vs error), robustness under OOD/adversarial corpora.</li>
+  <li>If shipped without a robust OOD/conflict mechanism, the gating will be exactly where the "Truth Gap" bites: confidently wrong early.</li>
+</ul>
+
+
+<!-- ============================================================ -->
+<!-- METRICS SECTION -->
+<!-- ============================================================ -->
+
+<div class="part-divider">
+  <h2>Metrics</h2>
+  <div class="part-sub">What to compute from α, and what governs early exit</div>
+</div>
+
+<!-- SECTION 0 -->
+<h2 id="what-measuring">0. What We're Actually Measuring</h2>
+
+<div class="callout purple">
+  <div class="callout-title">Core Principle</div>
+  Uncertainty shouldn't start from "pick an entropy." It should start from <strong>the decision and its loss</strong> — the minimal expected loss of the Bayes-optimal action under your predictive beliefs.
+</div>
+
+<p>For this system, the decision is:</p>
+<ul>
+  <li><strong>Action</strong> at exit head ℓ ∈ {3, 6, 9, 12}: <code>a ∈ {EXIT at ℓ, CONTINUE}</code></li>
+  <li><strong>Loss</strong> reflects: ranking harm (NDCG@10 drop, pairwise inversion rate, "top-1 changes?") plus compute cost.</li>
+</ul>
+<p>"More information" has two meanings here:</p>
+<ol>
+  <li><strong>More compute</strong> — go to deeper layers</li>
+  <li><strong>More data</strong> — future training / domain adaptation</li>
+</ol>
+
+<!-- SECTION 1 -->
+<h2 id="output-param">1. Output Parameterization at Each Exit Head</h2>
+
+<h3>1.1 Relevance Head Type</h3>
+
+<div class="callout info">
+  <div class="callout-title">Recommended: Option A</div>
+  <strong>Multi-class relevance EDL (Dirichlet)</strong> — Labels <em>y</em> ∈ {0, 1, 2} (not relevant / relevant / highly relevant) or binary. Each exit head outputs evidence <code>e<sup>(ℓ)</sup> ∈ ℝ₊ᴷ</code>, then:
+</div>
+<div class="formula">αₖ<sup>(ℓ)</sup> = eₖ<sup>(ℓ)</sup> + 1 &nbsp;&nbsp;|&nbsp;&nbsp; S<sup>(ℓ)</sup> = Σₖ αₖ<sup>(ℓ)</sup> &nbsp;&nbsp;|&nbsp;&nbsp; p̂ₖ<sup>(ℓ)</sup> = αₖ<sup>(ℓ)</sup> / S<sup>(ℓ)</sup></div>
+<p><strong>Option B:</strong> Scalar score with regression EDL (Normal–Inverse–Gamma) — useful for continuous "gain" scores with aleatoric/epistemic variances directly. Option A is easier to calibrate and evaluate because you can tie everything back to discrete ranking-relevant events.</p>
+
+<h3>1.2 Training Loss</h3>
+<div class="callout warn">
+  <div class="callout-title">Must Be Stable</div>
+  Use the standard EDL structure: <strong>data-fit + KL-to-uniform with annealing</strong>. Otherwise you'll get either vacuous predictions everywhere or spiky overconfidence.
+</div>
+
+<!-- SECTION 2 -->
+<h2 id="metric-inventory">2. Metric Inventory — What to Compute from α<sup>(ℓ)</sup></h2>
+
+<div class="callout info">
+  <div class="callout-title">Design Rule</div>
+  Don't crown one metric king. Use a <strong>metric panel</strong> and let gating learn how to use it.
+</div>
+
+<h3>2.1 Base EDL Quantities (cheap, analytic)</h3>
+<p>From Subjective Logic interpretation — belief masses and vacuity:</p>
+<div class="formula">u<sup>(ℓ)</sup> = K / S<sup>(ℓ)</sup> &nbsp;&nbsp;&nbsp; (high u = low evidence = "I'm ignorant")</div>
+<p>Also compute:</p>
+<ul>
+  <li><strong>Margin:</strong> <code>m<sup>(ℓ)</sup> = p̂₍₁₎<sup>(ℓ)</sup> − p̂₍₂₎<sup>(ℓ)</sup></code> — helps separate "confident" vs "just barely."</li>
+  <li><strong>Total predictive entropy:</strong> <code>U_tot<sup>(ℓ)</sup> = H(p̂<sup>(ℓ)</sup>)</code></li>
+</ul>
+
+<h3>2.2 Aleatoric vs Epistemic Proxies (Dirichlet-based)</h3>
+<ul>
+  <li><strong>Aleatoric proxy:</strong> Expected categorical entropy under the Dirichlet<br>
+    <code>U_alea<sup>(ℓ)</sup> = E_{p∼Dir(α)}[H(p)]</code> — efficient digamma-based closed forms.</li>
+  <li><strong>Epistemic proxy:</strong> Difference<br>
+    <code>U_epi<sup>(ℓ)</sup> = H(p̂<sup>(ℓ)</sup>) − E[H(p)]</code> — mutual-information-style "uncertainty due to posterior spread."</li>
+</ul>
+<div class="callout warn">
+  <div class="callout-title">Important Warning</div>
+  The popular "entropy + mutual information" story is frequently overloaded/incoherent and can be a poor estimator of what people claim it measures. Treat U<sub>epi</sub> and U<sub>alea</sub> <strong>as features, not ground truth semantics</strong>.
+</div>
+
+<h3>2.3 Conflict vs Ignorance</h3>
+<p>Subjective logic distinguishes:</p>
+<ul>
+  <li><strong>Vacuity</strong> = lack of evidence (ignorance) — "I don't know"</li>
+  <li><strong>Dissonance</strong> = conflicting evidence (internal disagreement) — "plausible words but contradictory/noisy"</li>
+</ul>
+<p>You don't need perfect semantics; you need a knob that correlates with your two failure modes.</p>
+
+<h3>2.4 OOD / Adversarial Vulnerability</h3>
+<div class="callout warn">
+  <div class="callout-title">Critical Failure Mode</div>
+  Adversarial/far-OOD inputs can induce high Dirichlet strength <em>S</em> (low <em>u</em>) — spurious confidence. This is the exact "exit early with confidence on garbage" disaster.
+</div>
+<p>Add separate OOD-likelihood features (cheap):</p>
+<ul>
+  <li><strong>Representation density</strong> in embedding space (DAEDL-style): far from training manifold ⇒ high uncertainty.</li>
+  <li><strong>Lightweight text-quality score:</strong> language ID confidence, character entropy, compression ratio, tokenization anomaly rate.</li>
+</ul>
+
+<!-- SECTION 3 -->
+<h2 id="gating-choice">3. What Metric Governs Early Exit?</h2>
+
+<h3>3.1 Don't Gate on "epistemic &lt; τ" Directly</h3>
+<p>Because: EDL can be overconfident under shift, EDL robustness itself has been questioned ("mirage" critiques), and naive entropy/MI semantics are unreliable.</p>
+
+<h3>3.2 Gate on Expected Compute Uncertainty Reduction (EUR<sub>compute</sub>)</h3>
+<p>Adapt the "expected uncertainty reduction" idea to compute instead of data. The policy is: "run deeper layers."</p>
+<p>Define a per-(q, d) target offline:</p>
+<ul>
+  <li>Let <code>L_rank<sup>(ℓ)</sup></code> be the ranking loss if you exit at layer ℓ</li>
+  <li>Improvement from continuing: <code>Δℓ = L_rank<sup>(ℓ)</sup> − L_rank<sup>(12)</sup></code></li>
+  <li>Compute cost of continuing: <code>Cℓ</code></li>
+</ul>
+<div class="formula">EUR_compute<sup>ℓ</sup> = E[ Δℓ | features at layer ℓ ]</div>
+<p><strong>Exit when:</strong></p>
+<div class="formula">EUR_compute<sup>ℓ</sup> ≤ λ · Cℓ</div>
+<p>This is "compute as variable governed by confidence" — but confidence is operationalized as <em>expected benefit of spending more compute</em>.</p>
+
+<h3>3.3 Features to Predict EUR<sub>compute</sub> (Uncertainty Metric Panel)</h3>
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Signal Type</th><th>Features</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Epistemic / Reducible</strong></td><td>Vacuity <code>u = K/S</code>, U<sub>epi</sub> = H(p̂) − E[H(p)], density score</td></tr>
+    <tr><td><strong>Aleatoric / Irreducible</strong></td><td>U<sub>alea</sub> = E[H(p)], dissonance (conflict), document-quality noise score</td></tr>
+    <tr><td><strong>Task Geometry (ranking)</strong></td><td>Margin <em>m<sup>(ℓ)</sup></em>, score gap to current top-1/top-k, stability under light perturbations</td></tr>
+  </tbody>
+</table>
+</div>
+<p>Then train a tiny gating model <code>gℓ(·)</code> (logistic regression / small MLP) to predict either <code>Δ̂ℓ</code> (regression) or <code>Pr(Δℓ > λCℓ)</code> (classification). This avoids pretending any single scalar is "the epistemic uncertainty."</p>
+
+<!-- SECTION 4 -->
+<h2 id="epi-vs-alea">4. Separating Epistemic from Aleatoric in IR Practice</h2>
+
+<h3>4.1 Aleatoric Supervision (label ambiguity / observation noise)</h3>
+<ul>
+  <li>Use multiple human judgments per (q, d) when available; define disagreement as an aleatoric target.</li>
+  <li>If you only have clicks: use repeated impressions as noisy samples; create a "stability" label (high variance click outcomes ⇒ aleatoric-ish).</li>
+</ul>
+<p><strong>Train objective:</strong> For high-disagreement points, encourage higher U<sub>alea</sub> / dissonance, without necessarily increasing vacuity.</p>
+
+<h3>4.2 Epistemic Supervision (knowledge gap / OOD)</h3>
+<p>Construct OOD slices:</p>
+<ul>
+  <li>Unseen verticals</li>
+  <li>New languages / code-mixed</li>
+  <li>Spam/SEO corpora</li>
+  <li>Adversarial lexical overlap negatives (linguistically similar but wrong)</li>
+</ul>
+<p><strong>Train objective:</strong> Encourage higher vacuity / density-based uncertainty on these points.</p>
+<div class="callout warn">
+  <div class="callout-title">Remember</div>
+  Subjective uncertainty ≠ performance. You need external grounding and should not assume calibration transfers.
+</div>
+
+<!-- SECTION 5 -->
+<h2 id="phases">5. Step-by-Step Process Before Full IR Model</h2>
+
+<div class="callout info">
+  <div class="callout-title">Strategy</div>
+  If you jump straight into a trillion-doc reranker, you'll spend months debugging ghosts. Incremental validation is essential.
+</div>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Phase</th><th>Goal</th><th>Key Activities</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><span class="phase phase-1">Phase 1</span></td>
+      <td>UQ sanity on controlled text classification</td>
+      <td>Stable text classification benchmark. Tests: inject label noise → U<sub>alea</sub> rises; domain shift → vacuity/density rises; calibration curves vs accuracy.</td>
+    </tr>
+    <tr>
+      <td><span class="phase phase-2">Phase 2</span></td>
+      <td>Pointwise relevance classification</td>
+      <td>MS MARCO passage relevance. Cross-encoder with EDL head at final layer only. Validate OOD slices don't look confident.</td>
+    </tr>
+    <tr>
+      <td><span class="phase phase-3">Phase 3</span></td>
+      <td>Add early exits + teacher distillation</td>
+      <td>Exit heads at 3/6/9, same EDL parameterization. Train with relevance loss + distillation from layer-12. Collect offline Δℓ labels to train gℓ.</td>
+    </tr>
+    <tr>
+      <td><span class="phase phase-4">Phase 4</span></td>
+      <td>Robustness hardening ("Truth Gap" phase)</td>
+      <td>Add density-aware scaling, conflict-aware features, metamorphic transforms. Evaluate against adversarial lexical overlap and spam corpora.</td>
+    </tr>
+    <tr>
+      <td><span class="phase phase-5">Phase 5</span></td>
+      <td>Ranking integration + compute policy eval</td>
+      <td>Pairwise/listwise objective. Evaluate NDCG/MRR vs compute budget, selective risk curves, worst-case slices.</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<!-- DELIVERABLE -->
+<section id="deliverable">
+  <h2>Deliverable Summary</h2>
+  <div class="callout purple">
+    <div class="callout-title">The Metric Choice — In One Line</div>
+    Use EDL to emit a higher-order predictive object (α), compute a <strong>panel of uncertainty features</strong> (vacuity, expected entropy, dissonance, density), and gate early-exit using a <strong>learned estimator of expected benefit from more compute</strong> (EUR<sub>compute</sub>), not a single "epistemic &lt; τ" threshold.<br><br>
+    This aligns with the decision/policy-dependent view of reducibility while still exploiting EDL's single-pass efficiency.
+  </div>
+</section>
+
+</main>
+</body>
+</html>
