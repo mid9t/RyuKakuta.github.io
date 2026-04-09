@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EDL Phase 2 — PDF Analysis &amp; Evaluation</title>
+<link rel="canonical" href="https://mid9t.github.io/RyuKakuta.github.io/articles/classic-edl-analysis/">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #faf8f4;
+    --text: #2c2a26;
+    --text-muted: #6b675e;
+    --accent: #b04a32;
+    --accent-light: #f0e0da;
+    --border: #e0dcd4;
+    --code-bg: #f0eee8;
+    --tag-bg: #e8e4db;
+    --phase2: #2d7a4f;
+    --phase3: #b08a1a;
+    --phase4: #7a5fb0;
+    --sidebar-width: 260px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 17px;
+    line-height: 1.72;
+    color: var(--text);
+    background: var(--bg);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* --- NAV SIDEBAR --- */
+  nav {
+    position: fixed;
+    top: 0; left: 0;
+    width: var(--sidebar-width);
+    height: 100vh;
+    padding: 2.5rem 1.4rem;
+    overflow-y: auto;
+    border-right: 1px solid var(--border);
+    background: var(--bg);
+    z-index: 10;
+  }
+  nav h3 {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+    font-weight: 600;
+  }
+  nav a {
+    display: block;
+    font-size: 13.5px;
+    line-height: 1.45;
+    color: var(--text-muted);
+    text-decoration: none;
+    padding: 0.35rem 0;
+    transition: color 0.15s;
+    font-family: 'Source Serif 4', serif;
+  }
+  nav a:hover { color: var(--accent); }
+  nav .sep { height: 1px; background: var(--border); margin: 0.8rem 0; }
+
+  /* --- MAIN CONTENT --- */
+  main {
+    margin-left: var(--sidebar-width);
+    max-width: 740px;
+    padding: 3.5rem 2.5rem 6rem;
+  }
+
+  /* --- HEADER --- */
+  header { margin-bottom: 3rem; padding-bottom: 2rem; border-bottom: 2px solid var(--text); }
+  header h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.5rem;
+  }
+  header .subtitle {
+    font-size: 1.05rem;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+
+  /* --- SECTIONS --- */
+  section { margin-bottom: 3rem; }
+
+  h2 {
+    font-size: 1.35rem;
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+    padding-top: 1.5rem;
+    letter-spacing: -0.01em;
+    color: var(--text);
+  }
+  h2 .issue-num {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-light);
+    padding: 0.15em 0.55em;
+    border-radius: 3px;
+    vertical-align: middle;
+    margin-right: 0.4rem;
+    position: relative;
+    top: -1px;
+  }
+
+  h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin: 1.6rem 0 0.4rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 0.78rem;
+  }
+
+  p { margin-bottom: 0.9rem; }
+
+  /* --- CALLOUTS --- */
+  blockquote {
+    border-left: 3px solid var(--accent);
+    padding: 0.7rem 1.2rem;
+    margin: 1.2rem 0;
+    background: var(--accent-light);
+    font-style: italic;
+    color: var(--text);
+    border-radius: 0 4px 4px 0;
+    font-size: 0.96rem;
+  }
+
+  .verdict {
+    padding: 0.65rem 1rem;
+    margin: 1.2rem 0;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 0.92rem;
+    border: 1px solid var(--border);
+    background: #f7f5f0;
+  }
+  .verdict::before {
+    content: "Verdict → ";
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  /* --- CODE --- */
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 1rem 1.2rem;
+    overflow-x: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    line-height: 1.6;
+    margin: 1rem 0 1.2rem;
+  }
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85em;
+    background: var(--code-bg);
+    padding: 0.1em 0.35em;
+    border-radius: 3px;
+  }
+  pre code { background: none; padding: 0; font-size: 1em; }
+
+  /* --- TABLE --- */
+  .table-wrap { overflow-x: auto; margin: 1.4rem 0; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+  th {
+    text-align: left;
+    font-weight: 600;
+    padding: 0.55rem 0.8rem;
+    border-bottom: 2px solid var(--text);
+    font-size: 0.78rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  td {
+    padding: 0.5rem 0.8rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  tr:last-child td { border-bottom: none; }
+
+  .tag {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    padding: 0.12em 0.5em;
+    border-radius: 3px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .tag-p2 { background: #d4eddd; color: var(--phase2); }
+  .tag-p3 { background: #f5ecc8; color: var(--phase3); }
+  .tag-p4 { background: #e6dff0; color: var(--phase4); }
+
+  /* --- LANGUAGE TABLE --- */
+  .lang-table td:first-child { font-style: italic; color: var(--text-muted); }
+
+  /* --- RESPONSIVE --- */
+  @media (max-width: 900px) {
+    nav { display: none; }
+    main { margin-left: 0; padding: 2rem 1.2rem 4rem; }
+    header h1 { font-size: 1.6rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <h3>Contents</h3>
+  <a href="#framing">Framing</a>
+  <a href="#issue1">1 — ERU/MI = 0.084</a>
+  <a href="#issue2">2 — Routing Margin</a>
+  <a href="#issue3">3 — Brier Not Converged</a>
+  <a href="#issue4">4 — OOD Data</a>
+  <a href="#issue5">5 — Theoretical Language</a>
+  <a href="#issue6">6 — MC Dropout</a>
+  <div class="sep"></div>
+  <a href="#phase-map">Phase Mapping Table</a>
+  <a href="#new-finding">New Finding: Dissonance</a>
+</nav>
+
+<main>
+  <header>
+    <h1>EDL Phase 2 — PDF Analysis &amp; Evaluation</h1>
+    <div class="subtitle">What the PDF is actually saying, mapped to actionable phase work</div>
+  </header>
+
+  <!-- FRAMING -->
+  <section id="framing">
+    <h2>Framing</h2>
+    <p>The PDF makes one overarching argument that supersedes all its specific recommendations:</p>
+    <blockquote>Do not gate on a single uncertainty scalar. EDL's output is a higher-order object (α). Extract a panel of features from it and learn to predict expected benefit from more compute — EUR<sub>compute</sub> — rather than thresholding any single metric.</blockquote>
+    <p>Every specific recommendation in the PDF is a consequence of this. Evaluating them against Phase 2 requires first establishing which issues are Phase 2 problems (final-layer relevance classification) and which are Phase 3 problems (early exit gating). The PDF explicitly maps this in its phase structure on pages 12–13, which aligns almost exactly with the phase structure of this project.</p>
+  </section>
+
+  <!-- ISSUE 1 -->
+  <section id="issue1">
+    <h2><span class="issue-num">Issue 1</span> ERU/MI = 0.084</h2>
+
+    <h3>PDF Diagnosis</h3>
+    <p>Pages 8–9 identify this failure mode precisely. The predictive entropy minus expected entropy decomposition (the ERU/MI calculation) is flagged with an explicit warning:</p>
+    <blockquote>"Treat U<sub>epi</sub> and U<sub>alea</sub> as features, not ground truth semantics."</blockquote>
+    <p>The PDF further explains why ERU/MI is near zero in single-model EDL: without ensemble disagreement or density awareness, the Dirichlet distribution concentrates deterministically. The mutual information term collapses because there is no source of parameter uncertainty in the model — every forward pass produces identical α values.</p>
+
+    <h3>PDF's Proposed Fix</h3>
+    <p><strong>Density-aware scaling (DAEDL-style, page 5):</strong> Multiply logits by a feature-space density estimate <em>s(x)</em> so that inputs far from the training manifold drive toward uniform predictions. This directly raises ERU/MI on OOD and hard negatives without requiring an ensemble.</p>
+    <p><strong>Teacher uncertainty (page 6):</strong> Run a small deep ensemble offline on a sample of traffic, then train the EDL head to match not just labels but also the teacher's uncertainty ordering. This is distillation of epistemic signal — cheaper than full Bootstrap Distill but achieves similar calibration.</p>
+
+    <h3>Evaluation for Phase 2</h3>
+    <p>DAEDL-style density scaling is feasible in Phase 2 but requires computing a feature-space density estimate during training. The simplest implementation uses the CLS embeddings from the frozen BERT layers — a Gaussian discriminant analysis over the training set's CLS representations gives <em>s(x)</em> cheaply. The cost is one additional pass over the training set to fit the density model.</p>
+    <p>The teacher uncertainty approach is strictly a Phase 3 concern — it requires offline ensemble inference on a traffic sample, which presupposes a deployed system.</p>
+
+    <div class="verdict">DAEDL density scaling is Phase 2 feasible and directly addresses ERU/MI. Teacher uncertainty distillation is Phase 3 only.</div>
+  </section>
+
+  <!-- ISSUE 2 -->
+  <section id="issue2">
+    <h2><span class="issue-num">Issue 2</span> Routing Margin = 1.28 S Units</h2>
+
+    <h3>PDF Diagnosis</h3>
+    <p>The routing margin problem is reframed entirely. Pages 9–10 argue that thresholding on <em>S</em> directly is the wrong approach regardless of margin width:</p>
+    <blockquote>"Don't gate on 'epistemic &lt; τ' directly. EDL can be overconfident under shift unless you explicitly fix it."</blockquote>
+    <p>Instead, the PDF proposes EUR<sub>compute</sub> — learning to predict the expected benefit of spending more compute (deeper layers) from a panel of features. The margin problem then becomes: is the feature panel discriminative enough that a learned gating model can separate the slices?</p>
+    <p>From this perspective, the current routing margin of 1.28 is not necessarily fatal — it might be sufficient as one feature among many in a learned gating model, even if it is too narrow to threshold directly.</p>
+
+    <h3>PDF's Proposed Fix</h3>
+    <p><strong>C-EDL conflict calibration:</strong> Measure representational disagreement using label-preserving transforms (paraphrases, sentence order perturbations). Passages near the semantic decision boundary (hard negatives) show higher disagreement across transforms than clear positives or easy negatives. This adds a conflict/dissonance feature orthogonal to <em>S</em>.</p>
+    <p><strong>Margin metric (page 8):</strong> <code>m(ℓ) = p̂₁(ℓ) − p̂₂(ℓ)</code> — the gap between the top two predicted class probabilities. This is cheap to compute and provides a complementary signal to <em>S</em>. A hard negative with <em>S</em>=5.6 and margin=0.1 (nearly tied classes) is clearly different from an easy negative with <em>S</em>=10.0 and margin=0.9.</p>
+
+    <h3>Evaluation for Phase 2</h3>
+    <p>The margin metric <em>m</em> is a zero-cost addition — it is computed from the existing α tensor and should be added to <code>profile_uncertainty</code> immediately. It transforms the routing signal from one dimension (<em>S</em>) to two dimensions (<em>S</em>, margin), which substantially improves separation without any training changes.</p>
+    <p>C-EDL conflict calibration requires generating label-preserving transforms during training, which adds data pipeline complexity. Feasible in Phase 2 but better scheduled for Phase 3 robustness hardening.</p>
+
+    <div class="verdict">Margin metric is free and should be added now. C-EDL transforms are Phase 3 work.</div>
+  </section>
+
+  <!-- ISSUE 3 -->
+  <section id="issue3">
+    <h2><span class="issue-num">Issue 3</span> Brier = 0.250, Not Converged</h2>
+
+    <h3>PDF Diagnosis</h3>
+    <p>Pages 1–2 and 7 address training stability directly:</p>
+    <blockquote>"Use the standard EDL loss structure: data-fit + KL-to-uniform with annealing. This matters because otherwise you'll get either vacuous predictions everywhere or spiky overconfidence."</blockquote>
+    <p>This is exactly the KL annealing fix already proposed. The PDF additionally mentions <strong>Re-EDL</strong> (page 2) as a simplification — removing parts of the classical loss to reduce tuning complexity and expose the prior weight as a single tunable hyperparameter.</p>
+
+    <h3>PDF's Specific Addition</h3>
+    <p><strong>Meta-Policy Control (MPC, page 2):</strong> A policy network that dynamically adapts KL weight via bi-level optimization. Theoretically principled version of manual KL annealing, but significantly more complex to implement.</p>
+
+    <h3>Evaluation for Phase 2</h3>
+    <p>Re-EDL's simplification (dropping variance regularization, using prior weight as the single hyperparameter) is directly applicable. The current implementation uses both Brier loss and binary KL penalty — Re-EDL would drop one of these and replace both with a single prior-weight-scaled loss. This reduces the hyperparameter space from <code>{KL_WEIGHT, S_REG_WEIGHT, OOD_LOSS_WEIGHT}</code> to a single λ, which is easier to tune.</p>
+    <p>MPC is clearly out of scope — it requires a separate policy network trained via bi-level optimization.</p>
+
+    <div class="verdict">Re-EDL simplification is worth considering as a replacement for Brier+KL. MPC is Phase 4+. Manual annealing is the correct Phase 2 action.</div>
+  </section>
+
+  <!-- ISSUE 4 -->
+  <section id="issue4">
+    <h2><span class="issue-num">Issue 4</span> OOD Data is Word-Shuffled</h2>
+
+    <h3>PDF Diagnosis</h3>
+    <p>This is the most extensively discussed issue. Pages 4 and 11 are explicit:</p>
+    <blockquote>"Adversarial/far-OOD inputs can induce high Dirichlet strength S (low u), producing spurious confidence… this is the exact failure mode that would make your gating do the wrong thing."</blockquote>
+    <p>The PDF recommends constructing OOD slices from: unseen verticals, new languages / code-mixed text, spam/SEO corpora, and adversarial lexical overlap negatives (linguistically similar but wrong).</p>
+    <p>Critically, the PDF also recommends adding a lightweight <strong>text-quality score</strong> as a separate feature: language ID confidence, character entropy, compression ratio, tokenization anomaly rate.</p>
+
+    <h3>Evaluation for Phase 2</h3>
+    <p>The OOD replacement (BeIR/SciFact, BeIR/FIQA) already identified is correct and aligns with "unseen verticals." The PDF adds two important extensions:</p>
+    <p>First, the <strong>spam/SEO corpus slice</strong> is specific to IR and is not covered by BeIR. Web spam and SEO-optimized pages with high lexical overlap to queries but no informational content are the most dangerous OOD failure mode for a retrieval system. These need to be in the OOD evaluation set before Phase 3 deployment.</p>
+    <p>Second, the <strong>text-quality score</strong> as an auxiliary feature is independent of EDL and cheap to implement:</p>
+    <pre><code>def text_quality_score(text: str, tokenizer) -> float:
+    """
+    Cheap proxy for text coherence. Low score = gibberish/spam.
+    Combines character entropy with tokenization anomaly rate.
+    """
+    from collections import Counter
+    import math
+
+    # Character entropy
+    counts = Counter(text)
+    total  = len(text)
+    char_entropy = -sum(
+        (c/total) * math.log2(c/total) for c in counts.values()
+    )
+
+    # Tokenization anomaly: ratio of [UNK] tokens
+    tokens   = tokenizer.encode(text, add_special_tokens=False)
+    unk_rate = tokens.count(tokenizer.unk_token_id) / max(len(tokens), 1)
+
+    return char_entropy * (1 - unk_rate)  # high = coherent, low = gibberish</code></pre>
+    <p>This score, combined with <em>S</em> and margin, gives a three-dimensional routing signal that is robust to the adversarial confidence failure mode.</p>
+
+    <div class="verdict">BeIR replacement is confirmed correct. Spam/SEO slice is a Phase 3 requirement. Text-quality score is a cheap Phase 2 addition.</div>
+  </section>
+
+  <!-- ISSUE 5 -->
+  <section id="issue5">
+    <h2><span class="issue-num">Issue 5</span> Theoretical Language</h2>
+
+    <h3>PDF Diagnosis</h3>
+    <blockquote>"Uncertainty shouldn't start from 'pick an entropy.' It should start from the decision and its loss."</blockquote>
+    <blockquote>"Treat U<sub>epi</sub> and U<sub>alea</sub> as features, not ground truth semantics."</blockquote>
+    <p>The PDF does not recommend abandoning the epistemic/aleatoric language entirely — it recommends treating the decomposition as a feature panel rather than a ground-truth measurement.</p>
+
+    <h3>Recommended Language Revision</h3>
+    <div class="table-wrap">
+      <table class="lang-table">
+        <thead>
+          <tr><th>Current Language</th><th>Earlier Diagnostic</th><th>PDF-Aligned</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>"epistemic uncertainty"</td>
+            <td>"domain-boundary distance"</td>
+            <td>Reducible uncertainty feature (U<sub>epi</sub>)</td>
+          </tr>
+          <tr>
+            <td>"aleatoric ambiguity"</td>
+            <td><em>(not addressed)</em></td>
+            <td>Irreducible uncertainty feature (U<sub>alea</sub>)</td>
+          </tr>
+          <tr>
+            <td>"vacuity"</td>
+            <td>"free-energy proxy"</td>
+            <td>Vacuity <em>u = K/S</em> — ignorance signal, not probability</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>The PDF's version is more precise because it preserves the useful distinction between <strong>vacuity</strong> (I have no evidence) and <strong>dissonance</strong> (I have contradictory evidence), which the simpler "domain-boundary distance" framing collapses. This distinction becomes critical in Phase 3 when routing needs to distinguish "I haven't seen this domain" from "this document is internally contradictory."</p>
+  </section>
+
+  <!-- ISSUE 6 -->
+  <section id="issue6">
+    <h2><span class="issue-num">Issue 6</span> MC Dropout vs PDF Recommendation</h2>
+
+    <h3>PDF Diagnosis</h3>
+    <p>MC Dropout is listed as a strong practical baseline (page 3) but with a specific caveat:</p>
+    <blockquote>"Ensembles are great teachers (for distillation) but expensive at runtime. Bad fit for trillion-scale reranking unless you only apply them to a tiny tail."</blockquote>
+    <p>The PDF's preferred path to epistemic signal is not MC Dropout at runtime — it is using ensembles offline to generate teacher uncertainty labels, then distilling those into the EDL head. This is cheaper at inference than MC Dropout while achieving similar calibration quality.</p>
+
+    <h3>Evaluation for Phase 2</h3>
+    <p>MC Dropout at inference (<em>n</em>=20 forward passes) costs 20× the compute of a single pass — for a Cross-Encoder ranker operating on large candidate sets, this is unacceptable at scale.</p>
+    <p>The PDF's offline distillation approach is strictly better: run an ensemble once on the training set (or a representative sample), extract uncertainty labels, add them as an auxiliary training target. At inference, the single EDL forward pass implicitly carries the distilled epistemic signal without additional compute.</p>
+    <p>However, for Phase 2 specifically — where the goal is validating the uncertainty gradient, not deploying at scale — MC Dropout is still useful as a <strong>diagnostic tool</strong>. Running MC Dropout offline on the test set to verify that the head shows higher variance on hard negatives than easy negatives provides empirical evidence that the EDL head is learning the right signal.</p>
+
+    <div class="verdict">Use MC Dropout as offline diagnostic in Phase 2. Plan offline ensemble distillation for Phase 3 production inference.</div>
+  </section>
+
+  <!-- PHASE MAPPING TABLE -->
+  <section id="phase-map">
+    <h2>Consolidated Phase Mapping</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>PDF Recommendation</th><th>Phase</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>DAEDL density scaling</td><td><span class="tag tag-p2">Phase 2</span></td><td>Feasible — CLS density estimate</td></tr>
+          <tr><td>Margin metric <em>m(ℓ)</em></td><td><span class="tag tag-p2">Phase 2</span></td><td>Free — add immediately</td></tr>
+          <tr><td>Text-quality score</td><td><span class="tag tag-p2">Phase 2</span></td><td>Cheap — add to preprocessing</td></tr>
+          <tr><td>KL annealing</td><td><span class="tag tag-p2">Phase 2</span></td><td>Already proposed</td></tr>
+          <tr><td>Re-EDL simplification</td><td><span class="tag tag-p2">Phase 2</span></td><td>Consider replacing Brier+KL</td></tr>
+          <tr><td>BeIR OOD replacement</td><td><span class="tag tag-p2">Phase 2</span></td><td>Already identified</td></tr>
+          <tr><td>C-EDL conflict calibration</td><td><span class="tag tag-p3">Phase 3</span></td><td>Robustness hardening</td></tr>
+          <tr><td>EUR<sub>compute</sub> gating model</td><td><span class="tag tag-p3">Phase 3</span></td><td>Early exit gating</td></tr>
+          <tr><td>Exit head consistency training</td><td><span class="tag tag-p3">Phase 3</span></td><td>CAT-style distillation</td></tr>
+          <tr><td>Spam/SEO OOD corpus</td><td><span class="tag tag-p3">Phase 3</span></td><td>Required before deployment</td></tr>
+          <tr><td>Teacher uncertainty distillation</td><td><span class="tag tag-p3">Phase 3</span></td><td>Replace MC Dropout at runtime</td></tr>
+          <tr><td>MPC dynamic calibration</td><td><span class="tag tag-p4">Phase 4</span></td><td>Production optimization</td></tr>
+          <tr><td>Conformal calibration layer</td><td><span class="tag tag-p4">Phase 4</span></td><td>Risk-controlled abstention</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- NEW FINDING -->
+  <section id="new-finding">
+    <h2>New Finding: Dissonance / Conflict Metric</h2>
+    <p>The dissonance/conflict metric (pages 8–9) is entirely new relative to the previous Phase 2 analysis. The PDF distinguishes:</p>
+    <p><strong>Vacuity</strong> = low total evidence = "I haven't seen anything like this"</p>
+    <p><strong>Dissonance</strong> = conflicting evidence across classes = "I've seen things like this but they point in opposite directions"</p>
+    <p>In the current results, hard negatives produce moderate <em>S</em> (5.60) but this single number cannot tell you <em>why</em> S is moderate — whether it is because the model has little evidence (vacuity) or conflicting evidence (dissonance). For a hard negative, dissonance is the correct interpretation: the model has evidence for both Relevant and Irrelevant. For OOD, vacuity is correct.</p>
+
+    <h3>Computing Dissonance from α</h3>
+    <pre><code>def dirichlet_dissonance(alpha, eps=1e-12):
+    """
+    Dissonance: conflicting evidence across classes.
+    High dissonance + moderate S → hard negative (aleatoric ambiguity).
+    Low dissonance + low S      → OOD (vacuity / ignorance).
+    From Subjective Logic formulation.
+    """
+    S = alpha.sum(dim=1, keepdim=True).clamp_min(eps)
+    b = (alpha - 1.0) / S            # belief masses
+    b = b.clamp_min(0.0)
+
+    K    = alpha.shape[1]
+    diss = torch.zeros(alpha.shape[0], device=alpha.device)
+    for i in range(K):
+        for j in range(K):
+            if i != j:
+                bal_ij = 1.0 - (b[:, i] - b[:, j]).abs() / (
+                    b[:, i] + b[:, j] + eps
+                )
+                diss += b[:, i] * b[:, j] * bal_ij
+    return diss</code></pre>
+    <p>Adding dissonance to <code>profile_uncertainty</code> would immediately reveal whether the hard-negative <em>S</em>=5.60 is vacuity-driven or dissonance-driven — a distinction that is invisible in the current results and critical for validating that the model is learning the right uncertainty structure.</p>
+  </section>
+
+</main>
+</body>
+</html>
