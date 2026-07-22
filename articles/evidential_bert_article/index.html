@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evidential BERT on CLINC150 — Porting Density-Aware EDL to Language</title>
+<meta name="description" content="A vision-tested uncertainty method meets the geometry of transformer embeddings — and most of the interesting engineering turns out to be about proving the method is doing anything at all.">
+<link rel="canonical" href="https://mid9t.github.io/RyuKakuta.github.io/articles/evidential_bert_article/">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+:root{
+  --bg:#f9f7f2;
+  --bg2:#f0ede4;
+  --bg3:#e4e0d4;
+  --bg4:#d8d3c5;
+  --line:rgba(26,25,22,0.12);
+  --line2:rgba(26,25,22,0.22);
+  --tx:#1a1916;
+  --tx2:#3d3d3a;
+  --tx3:#6b6b66;
+  --tx4:#9c9a92;
+
+  --amber:#b87314;
+  --amber-d:#fdf3e0;
+  --amber-t:#7a4a00;
+
+  --cyan:#0f6e56;
+  --cyan-d:#e1f5ee;
+  --cyan-t:#085041;
+
+  --rose:#a03020;
+  --rose-d:#faece7;
+  --rose-t:#712b13;
+
+  --sage:#3b6d11;
+  --sage-d:#eaf3de;
+  --sage-t:#27500a;
+
+  --violet:#534ab7;
+  --violet-d:#eeedfe;
+  --violet-t:#3c3489;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+  font-family:'IBM Plex Sans',system-ui,sans-serif;
+  background:var(--bg);
+  color:var(--tx2);
+  font-size:15.5px;
+  line-height:1.78;
+  max-width:880px;
+  margin:0 auto;
+  padding:3.5rem 2rem 7rem;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ── HEADER ── */
+.masthead{border-bottom:1px solid var(--line2);padding-bottom:2.25rem;margin-bottom:3rem}
+.eyebrow{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:0.7rem;letter-spacing:0.16em;text-transform:uppercase;
+  color:var(--amber);margin-bottom:1.1rem;display:flex;align-items:center;gap:10px;
+}
+.eyebrow::after{content:'';flex:1;height:1px;background:linear-gradient(to right,var(--amber),transparent);opacity:0.45}
+h1{
+  font-family:'Newsreader',Georgia,serif;
+  font-size:2.75rem;line-height:1.1;font-weight:400;color:var(--tx);
+  letter-spacing:-0.015em;
+}
+h1 em{font-style:italic;color:var(--amber-t)}
+.standfirst{
+  font-family:'Newsreader',serif;font-size:1.12rem;line-height:1.6;
+  color:var(--tx3);margin-top:1rem;max-width:680px;font-weight:300;
+}
+.byline{
+  font-family:'IBM Plex Mono',monospace;font-size:0.7rem;color:var(--tx4);
+  margin-top:1.75rem;padding-top:1rem;border-top:1px solid var(--line);
+  display:flex;gap:1.5rem;flex-wrap:wrap;
+}
+.byline span{white-space:nowrap}
+
+.site-back{
+  position:fixed;top:0;right:0;z-index:30;
+  font-family:'IBM Plex Sans',sans-serif;font-size:12px;
+  margin:0;padding:0.65rem 1rem;
+}
+.site-back a{
+  color:var(--tx4);text-decoration:none;border-bottom:none;
+}
+.site-back a:hover{color:var(--amber)}
+
+/* ── TYPE ── */
+h2{
+  font-family:'Newsreader',serif;font-size:1.75rem;line-height:1.25;
+  font-weight:400;color:var(--tx);margin:3.5rem 0 0.4rem;letter-spacing:-0.01em;
+}
+h3{
+  font-family:'IBM Plex Mono',monospace;font-size:0.7rem;
+  letter-spacing:0.15em;text-transform:uppercase;color:var(--tx4);
+  margin-top:3.25rem;margin-bottom:0.35rem;
+}
+h4{
+  font-family:'IBM Plex Sans',sans-serif;font-size:1.02rem;font-weight:600;
+  color:var(--tx);margin:2rem 0 0.4rem;
+}
+p{margin-bottom:1.15rem}
+strong{color:var(--tx);font-weight:600}
+em{font-style:italic}
+a{color:var(--cyan-t);text-decoration:none;border-bottom:1px solid rgba(15,110,86,0.3)}
+
+code{
+  font-family:'IBM Plex Mono',monospace;font-size:0.85em;
+  background:var(--bg3);color:var(--amber-t);
+  padding:1.5px 5px;border-radius:3px;border:1px solid var(--line);
+}
+
+/* ── DROPCAP ── */
+.lede::first-letter{
+  font-family:'Newsreader',serif;float:left;font-size:3.6rem;line-height:0.82;
+  padding:0.1rem 0.7rem 0 0;color:var(--amber);font-weight:400;
+}
+
+/* ── CODE BLOCK ── */
+pre{
+  background:var(--bg2);border:1px solid var(--line);
+  border-left:2px solid var(--amber);border-radius:0 6px 6px 0;
+  padding:1.1rem 1.35rem;margin:1.5rem 0;overflow-x:auto;
+  font-family:'IBM Plex Mono',monospace;font-size:0.79rem;line-height:1.65;
+  color:var(--tx2);
+}
+pre code{background:none;border:none;padding:0;color:inherit;font-size:inherit}
+pre .c{color:var(--tx4);font-style:italic}
+pre .k{color:var(--violet-t)}
+pre .s{color:var(--sage-t)}
+pre .n{color:var(--cyan-t)}
+pre .f{color:var(--amber-t)}
+.code-cap{
+  font-family:'IBM Plex Mono',monospace;font-size:0.68rem;color:var(--tx4);
+  margin:-1.15rem 0 1.6rem 0;padding-left:1.35rem;letter-spacing:0.02em;
+}
+
+/* ── CALLOUTS ── */
+.box{
+  border-radius:6px;padding:1.1rem 1.35rem;margin:1.75rem 0;
+  border:1px solid;border-left-width:2px;
+}
+.box .lbl{
+  font-family:'IBM Plex Mono',monospace;font-size:0.65rem;letter-spacing:0.14em;
+  text-transform:uppercase;margin-bottom:0.45rem;display:block;
+}
+.box p{margin-bottom:0.6rem;font-size:0.93rem}
+.box p:last-child{margin-bottom:0}
+
+.box.problem{background:var(--rose-d);border-color:rgba(160,48,32,0.28);border-left-color:var(--rose)}
+.box.problem .lbl{color:var(--rose)}
+.box.fix{background:var(--sage-d);border-color:rgba(59,109,17,0.28);border-left-color:var(--sage)}
+.box.fix .lbl{color:var(--sage)}
+.box.insight{background:var(--cyan-d);border-color:rgba(15,110,86,0.3);border-left-color:var(--cyan)}
+.box.insight .lbl{color:var(--cyan)}
+.box.note{background:var(--violet-d);border-color:rgba(83,74,183,0.28);border-left-color:var(--violet)}
+.box.note .lbl{color:var(--violet)}
+
+/* ── PULLQUOTE ── */
+.pull{
+  font-family:'Newsreader',serif;font-size:1.4rem;line-height:1.4;font-style:italic;
+  color:var(--tx);border-top:1px solid var(--line2);border-bottom:1px solid var(--line);
+  padding:1.75rem 0;margin:2.75rem 0;
+}
+
+/* ── TABLE ── */
+table{width:100%;border-collapse:collapse;margin:1.5rem 0;font-size:0.86rem}
+th{
+  text-align:left;padding:9px 12px;border-bottom:1px solid var(--line2);
+  font-family:'IBM Plex Mono',monospace;font-size:0.66rem;letter-spacing:0.1em;
+  text-transform:uppercase;color:var(--tx4);font-weight:400;
+}
+td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top;color:var(--tx2)}
+tr:hover td{background:var(--bg2)}
+td.mono{font-family:'IBM Plex Mono',monospace;font-size:0.8rem;color:var(--tx3)}
+td.head{color:var(--tx);font-weight:500}
+
+.tag{
+  display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:0.66rem;
+  padding:2px 7px;border-radius:3px;letter-spacing:0.04em;white-space:nowrap;
+}
+.tag.a{background:var(--amber-d);color:var(--amber-t);border:1px solid rgba(184,115,20,0.3)}
+.tag.c{background:var(--cyan-d);color:var(--cyan-t);border:1px solid rgba(15,110,86,0.3)}
+.tag.r{background:var(--rose-d);color:var(--rose-t);border:1px solid rgba(160,48,32,0.3)}
+.tag.g{background:var(--sage-d);color:var(--sage-t);border:1px solid rgba(59,109,17,0.3)}
+
+/* ── PHASE TIMELINE ── */
+.phases{margin:1.75rem 0;border-left:1px solid var(--line2);padding-left:0}
+.ph{position:relative;padding:0 0 1.5rem 1.75rem}
+.ph::before{
+  content:'';position:absolute;left:-4.5px;top:8px;width:8px;height:8px;
+  border-radius:50%;background:var(--bg);border:1.5px solid var(--amber);
+}
+.ph.done::before{background:var(--amber)}
+.ph.future::before{border-color:var(--tx4)}
+.ph-name{
+  font-family:'IBM Plex Mono',monospace;font-size:0.7rem;letter-spacing:0.1em;
+  text-transform:uppercase;color:var(--amber);margin-bottom:0.15rem;
+}
+.ph.future .ph-name{color:var(--tx4)}
+.ph-title{color:var(--tx);font-weight:500;font-size:0.98rem;margin-bottom:0.2rem}
+.ph-body{font-size:0.89rem;color:var(--tx3)}
+.ph-gate{
+  font-family:'IBM Plex Mono',monospace;font-size:0.74rem;color:var(--sage-t);
+  margin-top:0.4rem;padding:5px 10px;background:var(--bg2);
+  border-radius:4px;border:1px solid var(--line);display:inline-block;
+}
+
+/* ── EQUATION ── */
+.eq{
+  background:var(--bg2);border:1px solid var(--line);border-radius:6px;
+  padding:1.1rem 1.4rem;margin:1.4rem 0;text-align:center;
+  font-family:'IBM Plex Mono',monospace;font-size:0.9rem;color:var(--tx);
+  line-height:2;
+}
+.eq .an{display:block;font-size:0.72rem;color:var(--tx4);margin-top:0.5rem;font-style:normal;text-align:center}
+
+hr.div{border:none;border-top:1px solid var(--line);margin:3.5rem 0}
+
+.footer{
+  font-size:0.78rem;color:var(--tx4);margin-top:4rem;padding-top:1.25rem;
+  border-top:1px solid var(--line);line-height:1.7;
+}
+
+@media(max-width:640px){
+  body{padding:1.5rem 1.15rem 4rem;font-size:15px}
+  h1{font-size:1.9rem}
+  h2{font-size:1.4rem}
+  .byline{gap:0.75rem;font-size:0.66rem}
+}
+</style>
+</head>
+<body>
+
+<p class="site-back"><a href="/RyuKakuta.github.io/">← Ryu Kakuta</a></p>
+
+<div class="masthead">
+  <div class="eyebrow">Implementation Report · Milestone 1</div>
+  <h1>Evidential BERT on CLINC150: what breaks when you port <em>density-aware EDL</em> from pixels to language</h1>
+  <p class="standfirst">A vision-tested uncertainty method meets the geometry of transformer embeddings — and most of the interesting engineering turns out to be about proving the method is doing anything at all.</p>
+  <div class="byline">
+    <span>Task: 150-way intent classification + OOS rejection</span>
+    <span>Encoder: bert-base-uncased</span>
+    <span>Arms: CE / EDL / DAEDL</span>
+    <span>Scope: Milestone 1 (early-exit deferred)</span>
+  </div>
+</div>
+
+
+<p class="lede">There is a specific failure mode that haunts anyone who has tried to bolt an uncertainty-quantification module onto a working classifier: the module runs, produces numbers, the numbers get reported, and nobody notices that the module was mathematically inert. Not wrong — <em>inert</em>. It computed something, that something had no effect on any downstream decision, and the reported AUROC was the baseline's AUROC wearing a costume.</p>
+
+<p>This is not hypothetical. It happened in the CIFAR replication that precedes this work, and diagnosing it is what shapes nearly every design decision in the plan described below. The task now is to port DAEDL — density-aware evidential deep learning — from a validated CIFAR implementation to BERT on CLINC150, a 150-class intent classification benchmark with a built-in out-of-scope (OOS) rejection task. The port is not a copy-paste. The geometry of transformer embeddings breaks several assumptions that hold comfortably in vision, and the near-OOD character of the CLINC150 OOS set changes what "success" can even mean.</p>
+
+<p>What follows is a technical account of those breakages, the design decisions taken in response, and — most importantly — the diagnostic machinery built to make a repeat of the inert-density failure structurally impossible rather than merely unlikely.</p>
+
+
+<h3>Framing</h3>
+<h2>Why density-aware EDL, and why it is fragile</h2>
+
+<p>Standard evidential deep learning replaces the softmax with a Dirichlet distribution over the probability simplex. The network emits evidence parameters, and the Dirichlet concentration <code>α</code> encodes both a prediction (its mean) and a confidence (its total mass <code>α₀</code>). Vacuity, defined as <code>K/α₀</code>, is the headline uncertainty score.</p>
+
+<p>The well-documented weakness of this construction is that <code>α</code> is a direct function of the network logits, and logits are unconstrained on inputs the network has never seen. A feature vector far outside the training manifold can still produce large logits and therefore large evidence — high confidence in a region where the model has no basis for confidence at all. This is the feature-collapse problem, and it is the reason a purely logit-derived uncertainty score cannot be trusted as a distance-aware signal.</p>
+
+<p>DAEDL's answer is to introduce an explicit density term. Fit a Gaussian discriminant model over the penultimate feature space, compute a normalized density estimate <code>p̂ ∈ [0,1]</code> for each input, and use it to modulate the evidence:</p>
+
+<div class="eq">
+α = exp(z ⊙ p̂)
+<span class="an">DAEDL-faithful multiplicative rule. Low density shrinks the exponent toward zero, driving α toward the uniform prior.</span>
+</div>
+
+<p>The intuition is clean. In high-density regions <code>p̂ ≈ 1</code> and the rule reduces to standard EDL. In low-density regions <code>p̂ → 0</code> and <code>exp(z·p̂) → 1</code> for every class, collapsing to a maximally vacuous Dirichlet regardless of what the logits say. Distance-awareness is injected through the density estimate rather than hoped for from the encoder.</p>
+
+<div class="box problem">
+  <span class="lbl">The failure mode this design invites</span>
+  <p>The entire mechanism is hostage to the <em>dynamic range of <code>p̂</code> on in-distribution data</em>. If the normalizer maps ID densities into a narrow band near 1 — say <code>[0.90, 1.00]</code> — then <code>exp(z·p̂) ≈ exp(z)</code> for essentially every input the model will encounter, and the density term contributes nothing. The scores still compute. The AUROC is still reported. It is vanilla EDL's AUROC.</p>
+  <p>This is exactly what the reference repository's min-max normalization produced on CIFAR. Min-max is fitted on the min and max of the training log-densities, and log-density distributions have long left tails — a handful of outliers set <code>lo</code> so far below the bulk that the entire bulk compresses into the top decile of the output range.</p>
+</div>
+
+<p>Two lessons follow, and they structure everything downstream. First, the normalizer is not a preprocessing detail; it is the load-bearing component of the whole method. Second, and more consequentially: <strong>a method that can be silently inert requires a test that detects inertness directly, not a metric that happens to look reasonable.</strong></p>
+
+
+<h3>Bottleneck I</h3>
+<h2>Anisotropy, or why you cannot fit a 768-dimensional covariance with 100 examples</h2>
+
+<p>The density model in DAEDL is a Gaussian discriminant analysis over penultimate features. On CIFAR with 512-dimensional features, the CIFAR run already hit condition numbers around <code>3.5 × 10¹⁴</code> when fitting per-class covariances — numerically at the edge of what float32 can represent, which is why the density math here moves to float64 on CPU.</p>
+
+<p>BERT is materially worse on three axes simultaneously.</p>
+
+<p><strong>Dimensionality against sample count.</strong> Pooled BERT embeddings are 768-dimensional. CLINC150 provides roughly 100 training examples per intent class. A per-class quadratic discriminant model requires estimating a 768×768 covariance matrix from 100 samples — a matrix with ~295,000 free parameters estimated from 76,800 numbers. This is not ill-conditioned; it is unidentifiable. The sample covariance has rank at most 99 in a 768-dimensional space, meaning it is singular by construction and no amount of jitter regularization recovers meaningful structure.</p>
+
+<p><strong>Representation degeneration.</strong> Contextual embeddings from pretrained transformers are famously anisotropic — they occupy a narrow cone in the embedding space rather than distributing isotropically. The consequence for density estimation is that the covariance spectrum has a small number of very large eigenvalues and a long tail of near-zero ones. A Gaussian fitted to this geometry devotes almost all of its likelihood mass to a few dominant directions, and the Mahalanobis distance becomes numerically dominated by the whitening of directions that carry almost no variance and almost no signal.</p>
+
+<p><strong>Float32 stiffness on accelerator hardware.</strong> Cholesky factorization of a near-singular matrix in float32 fails or, worse, succeeds with garbage. The CIFAR run encountered this on MPS.</p>
+
+<div class="box fix">
+  <span class="lbl">Design response</span>
+  <p><strong>Tied covariance as the default, not per-class.</strong> A single shared covariance pools all 15,000 training examples into one estimate rather than splitting them 100-per-class. This is precisely the Lee et al. (2018) Mahalanobis detector — the standard, well-conditioned choice in NLP OOD literature — and it is well-conditioned for the right reason: the sample-to-dimension ratio goes from 100:768 to 15000:768.</p>
+  <p><strong>Preprocessing pipeline: center → PCA(k=128) → whiten.</strong> PCA truncation discards the degenerate tail of the spectrum before the covariance is ever fitted, which directly addresses anisotropy rather than papering over it with jitter. Whitening equalizes the retained directions so the Mahalanobis distance is not dominated by the top eigenvalue.</p>
+  <p><strong>float64 on CPU throughout.</strong> The density fit runs on maybe 15k×128 matrices — the compute cost is trivial and numerical stability is not negotiable.</p>
+  <p>Per-class QDA survives only as an ablation at <code>k ≤ 64</code>, where the sample-to-dimension ratio is at least defensible.</p>
+</div>
+
+<p>The core of the fit is compact enough to read directly. Note the eigendecomposition-based whitening transform, the pooled residual computation for tied mode, and the escalating jitter grid that fails loudly rather than silently:</p>
+
+<pre><code><span class="k">def</span> <span class="f">fit</span>(self, feats, labels):
+    X = np.asarray(feats, dtype=np.float64)
+    self.mean_ = X.mean(<span class="n">0</span>); Xc = X - self.mean_
+    cov = (Xc.T @ Xc) / max(len(Xc) - <span class="n">1</span>, <span class="n">1</span>)
+    w, V = np.linalg.eigh(cov)                    <span class="c"># spectrum of the pooled cov</span>
+    order = np.argsort(w)[::-<span class="n">1</span>]
+    w, V = np.clip(w[order], self.cfg.min_var, <span class="k">None</span>), V[:, order]
+    k = self.cfg.pca_dim <span class="k">or</span> X.shape[<span class="n">1</span>]
+    self.T_ = V[:, :k] / np.sqrt(w[:k])           <span class="c"># PCA + whitening in one map</span>
+    Z = Xc @ self.T_
+
+    <span class="k">if</span> self.cfg.cov_mode == <span class="s">"tied"</span>:
+        R = np.concatenate([Z[y == c] - self.mu_[i]     <span class="c"># pool ALL residuals</span>
+                            <span class="k">for</span> i, c <span class="k">in</span> enumerate(self.classes_)])
+        S = (R.T @ R) / max(len(R) - len(self.classes_), <span class="n">1</span>)
+        self.chol_, self.jitter_ = self._chol(S)</code></pre>
+<div class="code-cap">density/gda.py — the tied-covariance path. Per-class QDA branches below this and is ablation-only.</div>
+
+
+<h3>Bottleneck II</h3>
+<h2>Distance awareness in a transformer is an open problem</h2>
+
+<p>The theoretical justification for density-based OOD detection over neural features assumes something specific about the feature extractor: that it is approximately bi-Lipschitz, meaning it neither collapses distinct inputs to the same point nor arbitrarily expands small input differences. Without this property, a feature-space density estimate says nothing reliable about input-space typicality — two semantically unrelated utterances can land in the same feature neighborhood and receive identical density scores.</p>
+
+<p>Convolutional networks can be made approximately bi-Lipschitz through spectral normalization plus residual connections; this is the foundation of SNGP and related distance-aware architectures. Transformers are considerably harder. Self-attention is a data-dependent mixing operation whose Lipschitz constant depends on the input; LayerNorm is a projection onto a sphere that destroys magnitude information by design; and the residual-plus-normalization stack composes these effects across twelve layers. <strong>Enforcing distance preservation through the full BERT stack is not a solved problem, and naive spectral normalization inside the encoder tends to damage accuracy substantially.</strong></p>
+
+<div class="box insight">
+  <span class="lbl">The compromise, and why it is principled rather than merely convenient</span>
+  <p>Spectral normalization is applied to a <code>Linear(768 → 256)</code> bottleneck head only, leaving the encoder untouched. Critically, the bottleneck carries <strong>no nonlinearity by default</strong> — the feature the GDA sees is an affine map of the pooled embedding.</p>
+  <p>This has a specific consequence worth stating plainly: an affine transform of a Gaussian is Gaussian. By keeping the bottleneck linear, the feature distribution that the Gaussian discriminant model is asked to fit remains as close to its Gaussian modeling assumption as the pooled embedding itself was. Inserting a ReLU would fold the distribution against the origin and introduce exactly the kind of non-Gaussianity that GDA handles poorly. ReLU and tanh are retained as ablations, not defaults.</p>
+</div>
+
+<p>One further decision deserves emphasis because it inverts the usual instinct. <strong>The classifier head is deliberately left un-normalized</strong>, so logit magnitude is free to grow. The reasoning is diagnostic rather than architectural: the CIFAR investigation established that the <code>exp(z · p̂)</code> mechanism is hostage to logit scale — if <code>z</code> is large, then even a substantial reduction in <code>p̂</code> produces a small relative change in <code>exp(z·p̂)</code> compared to the dynamic range of <code>z</code> itself. Constraining logit scale would mask this interaction. The plan instead leaves it unconstrained and <em>measures</em> it, which is the only way to learn anything about it.</p>
+
+<p>The natural benchmark anchor here is the SNGP paper (Liu et al., NeurIPS 2020), which includes a BERT-on-CLINC150-OOS experiment. It is the canonical distance-aware-transformer result on this exact dataset and provides both a deterministic-BERT baseline row and a distance-aware target.</p>
+
+
+<h3>Bottleneck III</h3>
+<h2>Near-OOD is a different problem than far-OOD</h2>
+
+<p>This bottleneck is conceptual rather than numerical, and it is the one most likely to be underestimated by anyone arriving from vision benchmarks.</p>
+
+<p>CIFAR-10 against SVHN is a <em>far</em>-OOD problem. The two datasets differ in subject matter, capture conditions, color statistics, and low-level texture. A density model over learned features has an easy time separating them because they are genuinely separated in almost any reasonable representation.</p>
+
+<p>CLINC150's out-of-scope set is fluent, natural, well-formed English — conversational utterances that simply do not correspond to any of the 150 supported intents. Relative to a BERT encoder pretrained on a substantial fraction of the internet, these utterances are emphatically <strong>in</strong>-distribution at the representation level. They are out-of-scope with respect to the <em>task</em>, not out-of-distribution with respect to the <em>encoder</em>.</p>
+
+<div class="pull">The density gap that made CIFAR→SVHN easy does not exist here. What separates an in-scope utterance from an out-of-scope one is a task-relative distinction that must be learned during fine-tuning, not a distributional distinction the pretrained encoder already encodes.</div>
+
+<p>Three consequences follow directly. Raw density gaps will be smaller, so normalizer design matters more, not less — a normalizer that squashes a large gap is wasteful; a normalizer that squashes a small gap is fatal. Validation-based selection becomes essential rather than nice-to-have, since the margins between configurations will be narrow enough that eyeballing will not resolve them. And the honest claim to target shifts: beating maximum-softmax-probability by a wide margin is not a realistic goal on near-OOD intent detection. <strong>Beating it reliably across seeds is.</strong> That framing is stated up front in the plan rather than discovered retroactively, which is the difference between a result and a rationalization.</p>
+
+
+<h3>The breakthrough</h3>
+<h2>Two mechanisms that make the density term provably do something</h2>
+
+<p>Given the diagnosis, the interventions divide into two categories: fixing the normalizer so the density signal survives into <code>α</code>, and building an automated test that refuses to let an inert configuration reach a results table.</p>
+
+<h4>Normalizers designed around the actual distribution shape</h4>
+
+<p>Three normalizers are made pluggable, each fitted on <strong>training log-densities only</strong> — a detail that matters for leak-freedom, since fitting on validation would contaminate the selection process the entire experimental design depends on.</p>
+
+<table>
+  <thead>
+    <tr><th>Normalizer</th><th>Mechanism</th><th>Role</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="head">minmax</td>
+      <td>Linear rescale between train min and max</td>
+      <td><span class="tag r">reference-faithful</span> Retained purely for comparability with the source repository. This is the one that failed on CIFAR.</td>
+    </tr>
+    <tr>
+      <td class="head">qsigmoid</td>
+      <td>Logistic centered at the 5th percentile, scaled by <code>(q50−q05)/2</code></td>
+      <td><span class="tag g">recommended for mul</span> Anchors the transition on quantiles rather than extrema, so the heavy left tail cannot compress the bulk. ID mass sits near 1; low-density inputs fall toward 0.</td>
+    </tr>
+    <tr>
+      <td class="head">ecdf</td>
+      <td>Empirical rank against sorted train log-densities</td>
+      <td><span class="tag c">pairs with add_log</span> Distribution-free by construction. Immune to tail geometry entirely, at the cost of discarding magnitude information.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>The quantile-sigmoid deserves a note on why it addresses the specific failure. Min-max is a function of two order statistics — the extremes — which are precisely the least stable summaries of a heavy-tailed distribution. The quantile-sigmoid is a function of the 5th and 50th percentiles, which are robust. Where min-max asks "how far is this point between the most and least dense training examples," qsigmoid asks "is this point below the density level that only 5% of training data falls under," which is the question the mechanism actually needs answered.</p>
+
+<h4>The prediction-preserving combination rule</h4>
+
+<p>The second intervention is a new combination rule that sits alongside the DAEDL-faithful multiplicative one. This is the most substantive theoretical contribution in the plan:</p>
+
+<div class="eq">
+α<sub>mul</sub> = exp(z ⊙ p̂) &nbsp;&nbsp;&nbsp;·&nbsp;&nbsp;&nbsp; α<sub>add_log</sub> = exp(z + λ(p̂ − 1))
+<span class="an">Left: DAEDL-faithful; density scales each logit and can reorder them. Right: density enters as a class-independent additive shift.</span>
+</div>
+
+<p>The distinction has real teeth. In the multiplicative rule, <code>p̂</code> multiplies each logit, so the relative ordering of logits can change when <code>p̂</code> varies — a low-density input can have its argmax flipped, meaning <strong>the density term can change the prediction, not just the confidence</strong>. On in-distribution data this is a pure accuracy liability.</p>
+
+<p>In the additive-log rule, <code>λ(p̂ − 1)</code> is a scalar added identically to every logit. Since <code>argmax</code> is invariant to adding a constant to all entries, the prediction is <em>provably unchanged</em>. What does change is <code>α₀</code>, which is scaled by <code>e^{λ(p̂−1)}</code> — a factor of 1 when <code>p̂ = 1</code> and shrinking exponentially as density falls. Density is injected into <strong>evidence mass only</strong>.</p>
+
+<pre><code><span class="k">def</span> <span class="f">scale_alpha</span>(logits, phat, mode=<span class="s">"mul"</span>, lam=<span class="n">5.0</span>, clamp=<span class="n">15.0</span>):
+    z = logits.clamp(-clamp, clamp)
+    p = phat.to(z.dtype).unsqueeze(-<span class="n">1</span>)
+    <span class="k">if</span> mode == <span class="s">"mul"</span>:        <span class="c"># DAEDL-faithful: can flip predictions</span>
+        <span class="k">return</span> torch.exp(z * p)
+    <span class="k">if</span> mode == <span class="s">"add_log"</span>:    <span class="c"># prediction-preserving: scales alpha0 only</span>
+        <span class="k">return</span> torch.exp(z + lam * (p - <span class="n">1.0</span>))</code></pre>
+<div class="code-cap">density/gda.py — the two combination rules. The clamp is a BERT-specific addition; fresh classification heads produce logits that overflow exp() in epoch 0 where CIFAR's did not.</div>
+
+<div class="box insight">
+  <span class="lbl">Why this matters beyond this experiment</span>
+  <p>The <code>add_log</code> rule decouples two things that DAEDL conflates: <em>what the model predicts</em> and <em>how much the model should be believed</em>. For deployment in a rejection-gated system — which is the eventual target — this decoupling is exactly what you want. The classifier's accuracy on in-scope traffic is preserved by construction, and the density signal operates purely on the accept/reject decision. It cannot trade accuracy for detection, because it has no mechanism to do so.</p>
+  <p>It also makes the ablation cleanly interpretable. Any change in in-scope accuracy under <code>add_log</code> is a bug, not a tradeoff. That is a strong invariant to be able to assert.</p>
+</div>
+
+<h4>The materiality gate</h4>
+
+<p>The normalizer redesign makes inertness less likely. The materiality gate makes it <em>detectable</em>, which is the stronger property. This is a diagnostic that compares the plain <code>α</code> against the density-scaled <code>α</code> and asks directly: did anything change?</p>
+
+<pre><code>a0p = alpha_plain.sum(-<span class="n">1</span>)      <span class="c"># evidence mass, no density</span>
+a0s = alpha_scaled.sum(-<span class="n">1</span>)     <span class="c"># evidence mass, density-scaled</span>
+
+flip = (alpha_plain.argmax(-<span class="n">1</span>) != alpha_scaled.argmax(-<span class="n">1</span>)).float().mean()
+rel  = np.median(np.abs(a0s - a0p) / (a0p + <span class="n">1e-12</span>))
+rho  = spearmanr(a0p, a0s).statistic
+
+rep[<span class="s">"materiality"</span>] = {
+    <span class="s">"flip_rate"</span>: flip,
+    <span class="s">"median_rel_delta_alpha0"</span>: rel,
+    <span class="s">"spearman_alpha0"</span>: rho,
+    <span class="c"># INERT == the CIFAR failure mode: scaled alpha ranks identically</span>
+    <span class="s">"density_effect"</span>: <span class="s">"INERT"</span> <span class="k">if</span> (rho &gt;= <span class="n">0.999</span> <span class="k">and</span> rel &lt; <span class="n">0.05</span>) <span class="k">else</span> <span class="s">"ACTIVE"</span>,
+}</code></pre>
+<div class="code-cap">density/diagnostics.py — emitted as diagnostics.json alongside every results.json.</div>
+
+<p>The Spearman correlation is the load-bearing statistic. AUROC is a rank statistic: it depends only on the ordering of scores, not their magnitudes. If <code>ρ(α₀ᵖˡᵃⁱⁿ, α₀ˢᶜᵃˡᵉᵈ) ≥ 0.999</code>, then the density-scaled scores induce essentially the same ordering as the unscaled ones, and <strong>any AUROC computed from them is arithmetically guaranteed to match vanilla EDL's</strong>. That is what "inert" means, made operational. The median relative change in <code>α₀</code> is a second check catching cases where a uniform multiplicative rescale preserves rank while genuinely shifting the confidence scale.</p>
+
+<p>The gate is then wired into the selection procedure with real authority: a configuration flagged <code>INERT</code> is <strong>disqualified from the headline table even if its AUROC looks excellent</strong>. This is the methodological centerpiece. It converts a class of error that was previously caught only by a suspicious researcher manually inspecting intermediate values into an automated precondition that a result must satisfy before it is allowed to exist.</p>
+
+
+<h3>Hygiene</h3>
+<h2>Two more places where correctness is pinned by tests rather than discipline</h2>
+
+<p>Two additional design commitments deserve mention because they generalize well beyond this project.</p>
+
+<p><strong>A single orientation convention, unit-tested.</strong> Every uncertainty score in the codebase is defined so that <em>higher means more out-of-scope</em>, and OOS is the positive class in every metric computation. This sounds trivial. It is not: the CIFAR run contained a bug where a variable named <code>auroc_epis</code> was computed from the aleatoric score. Sign and orientation errors in uncertainty code are insidious because a flipped score often still produces a plausible-looking AUROC — sometimes even a good one, if the flipped quantity happens to be anti-correlated with the target. The fix is a test that constructs a deliberately confident logit vector and a deliberately unsure one and asserts the ordering for every score in the registry:</p>
+
+<pre><code><span class="k">def</span> <span class="f">test_orientation</span>():
+    conf   = torch.tensor([[<span class="n">8.0</span>, <span class="n">0.1</span>, <span class="n">0.1</span>]])   <span class="c"># confident</span>
+    unsure = torch.tensor([[<span class="n">0.4</span>, <span class="n">0.3</span>, <span class="n">0.3</span>]])   <span class="c"># unsure</span>
+    <span class="k">for</span> k, v <span class="k">in</span> scores_from_logits(unsure).items():
+        <span class="k">assert</span> v &gt; scores_from_logits(conf)[k], k    <span class="c"># higher = more OOS</span></code></pre>
+<div class="code-cap">tests/test_scores.py — kills an entire bug class at import time rather than at review time.</div>
+
+<p><strong>A validation OOS split that actually exists.</strong> The original pipeline silently discarded <code>oos_val</code>, keeping only <code>oos_test</code>. This is described in the plan as the single most important fix, and the reasoning is worth spelling out for the applied-science reader: <em>every</em> decision the method requires — which normalizer, which combination rule, what value of λ, where to put the rejection threshold, whether the uncertainty signal is learning at all during training — is a decision that needs OOS data to make. With only <code>oos_test</code> available, each of those decisions leaks test information into the reported result. The 100 held-out OOS validation utterances are what make the final number honest.</p>
+
+
+<h3>Process</h3>
+<h2>Phase gates and a pre-committed kill criterion</h2>
+
+<p>The experimental plan is structured as a sequence of gated phases, with numeric exit criteria fixed in advance. The intent is to make it impossible to slide into an unfalsifiable "it's almost working" state.</p>
+
+<div class="phases">
+  <div class="ph done">
+    <div class="ph-name">Phase A</div>
+    <div class="ph-title">Harness and cross-entropy baseline</div>
+    <div class="ph-body">Pipeline revisions, model, training loop, evaluation protocol, tests. CE arm across 5 seeds. GDA is fitted for every arm, which means the Mahalanobis baseline comes free.</div>
+    <div class="ph-gate">gate: in-scope test acc ≥ 0.960 (5-seed mean) · all tests green</div>
+  </div>
+  <div class="ph done">
+    <div class="ph-name">Phase B</div>
+    <div class="ph-title">Vanilla EDL arm</div>
+    <div class="ph-body">EDL loss mirrored from the validated CIFAR implementation, with a BERT-specific logit clamp added. A per-epoch vacuity-gap check fails fast if the uncertainty signal is broken.</div>
+    <div class="ph-gate">gate: acc within 1.5 pts of CE · vacuity_gap(oos−id) &gt; 0 from epoch 1 · vacuity AUROC ≥ msp AUROC − 0.01</div>
+  </div>
+  <div class="ph">
+    <div class="ph-name">Phase C</div>
+    <div class="ph-title">Density — three nested selection loops, hard timebox</div>
+    <div class="ph-body"><strong>C1 (representation):</strong> grid over <code>pca_dim</code> × <code>cov_mode</code>, selected on <em>raw</em> density AUROC before any normalizer — so a dead representation cannot be rescued by normalization tricks. <strong>C2 (normalizer × rule):</strong> selected on daedl_vacuity val AUROC, with INERT configs disqualified outright. <strong>C3 (inclusion):</strong> DAEDL enters the headline table only if its val AUROC advantage exceeds the pooled 5-seed standard deviation.</div>
+    <div class="ph-gate">kill: raw density val AUROC &lt; 0.75 → density cannot help → negative-result branch</div>
+  </div>
+  <div class="ph future">
+    <div class="ph-name">Phase E</div>
+    <div class="ph-title">Early exiting (Milestone 2)</div>
+    <div class="ph-body">Exit heads at layers {3, 6, 9, 12}, per-exit EDL losses, gating on per-exit vacuity. Interfaces are already reserved: <code>return_hidden_states</code> passthrough in the model, empty placeholder modules, and the <code>oos_val</code> split that exit-threshold calibration will need. The deliverable is a compute–accuracy–OOS-safety Pareto curve.</div>
+    <div class="ph-gate">everything in Milestone 1 exists to make that curve trustworthy</div>
+  </div>
+</div>
+
+<div class="box note">
+  <span class="lbl">The kill branch is a feature</span>
+  <p>If C1 fails, or C3 fails, or the calendar runs out, the headline reverts to CE+MSP / CE+Mahalanobis / EDL, and DAEDL is written up as a <em>rigorously diagnosed negative result</em>: the density term is inert or ineffective on near-OOD intent detection under normalizers X, Y, Z, with <code>diagnostics.json</code> numbers attributing the cause.</p>
+  <p>This is worth stating plainly for the business-side reader: a negative result with this level of forensic instrumentation is more valuable than a marginal positive result without it. It tells you something durable about when the method works — and it tells you the measurement apparatus is trustworthy, which is a prerequisite for believing any future positive result from the same pipeline. Demonstrating the same diagnostic discipline twice, across two modalities, is the actual contribution.</p>
+</div>
+
+
+<hr class="div">
+
+<h3>Synthesis</h3>
+<h2>What this connects to</h2>
+
+<p>It is worth situating this work against the broader critique of evidential deep learning. Recent theoretical analysis — most pointedly Shen et al. (NeurIPS 2024) — establishes that single-model EDL does not learn statistically meaningful epistemic uncertainty; its optimal meta-distribution is sample-size-independent, and the method is better characterized as an energy-based OOD detector wearing Dirichlet clothing. Vacuity does not vanish with more data, as genuine epistemic uncertainty must.</p>
+
+<p>The work described here is, in an important sense, a constructive response to that critique rather than a refutation of it. If EDL's uncertainty is fundamentally a distance-to-training-distribution signal, then <strong>the honest engineering move is to make that distance signal explicit, well-conditioned, and measurable</strong> — which is exactly what a properly fitted density term does. DAEDL is not trying to rescue the Bayesian interpretation. It is trying to supply, through an external density model, the distance-awareness that the logit-derived evidence cannot provide on its own.</p>
+
+<p>Seen this way, the materiality gate is not just a bug catcher. It is a direct empirical test of whether the density contribution is real or whether the reported performance is, once again, the underlying OOD detector's performance under a different name. That is precisely the question Shen et al.'s analysis says one should be asking of every EDL result.</p>
+
+<p>And the near-OOD framing sharpens it further. On far-OOD benchmarks, almost any distance signal works, which is why so many methods report strong CIFAR→SVHN numbers and why those numbers discriminate poorly between approaches. Fluent, task-irrelevant English against a pretrained encoder is the regime where distance-awareness has to be earned. It is also, not incidentally, much closer to what deployment actually looks like: the queries that break a production intent classifier are rarely gibberish. They are well-formed requests for something the system was never built to do.</p>
+
+<p class="footer">
+Primary sources referenced in the plan: Sensoy, Kaplan &amp; Kandemir, "Evidential Deep Learning to Quantify Classification Uncertainty" (NeurIPS 2018) · Lee et al., "A Simple Unified Framework for Detecting Out-of-Distribution Samples and Adversarial Attacks" (NeurIPS 2018) — the tied-covariance Mahalanobis detector · Liu et al., "Simple and Principled Uncertainty Estimation with Deterministic Deep Learning via Distance Awareness" (SNGP, NeurIPS 2020) — includes the canonical BERT-on-CLINC150-OOS experiment · Larson et al., "An Evaluation Dataset for Intent Classification and Out-of-Scope Prediction" (EMNLP 2019) — CLINC150 · Shen et al., "Are Uncertainty Quantification Capabilities of Evidential Deep Learning a Mirage?" (NeurIPS 2024). Milestone 1 covers the data pipeline, three experiment arms, and the diagnostic harness; early-exit heads and threshold gating are Milestone 2.
+</p>
+
+</body>
+</html>
