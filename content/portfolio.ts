@@ -137,12 +137,13 @@ export const projects: Project[] = [
 ];
 
 export const featuredArticle: FeaturedArticle = {
-  href: `${BASE_PATH}/articles/evidential_bert_article/`,
+  href: `${BASE_PATH}/articles/evidential_bert_part2/`,
   label: "Featured",
   category: "Theory + Engineering",
-  title: "Evidential BERT on CLINC150: porting density-aware EDL from vision to language",
+  title:
+    "Evidential BERT on CLINC150, part 2: measuring whether the density term earns its place",
   description:
-    "A combined theory-and-engineering deep dive: adapting density-aware Evidential Deep Learning to BERT embeddings, then validating on CLINC150 that the uncertainty signal is doing real work.",
+    "The density term turned out to be active and harmful. Before changing the method, the evaluation was rebuilt so the next answer — positive or negative — would be defensible.",
 };
 
 export const contact = {

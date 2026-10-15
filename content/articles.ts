@@ -17,8 +17,17 @@ export type Article = {
  */
 export const articles: Article[] = [
   {
-    slug: "evidential_bert_article",
+    slug: "evidential_bert_part2",
     label: "Featured",
+    category: "Theory + Engineering",
+    date: "2026-10-15",
+    title:
+      "Evidential BERT on CLINC150, part 2: measuring whether the density term earns its place",
+    dek: "The density term turned out to be active and harmful. Before changing the method, the evaluation was rebuilt so the next answer — positive or negative — would be defensible.",
+  },
+  {
+    slug: "evidential_bert_article",
+    label: "Report",
     category: "Theory + Engineering",
     date: "2026-07-21",
     title:
