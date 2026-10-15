@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evidential BERT on CLINC150, Part 2 — Measuring Whether the Density Term Earns Its Place</title>
+<meta name="description" content="The density term turned out to be active and harmful. Before changing the method, the evaluation was rebuilt so the next answer — positive or negative — would be defensible.">
+<link rel="canonical" href="https://mid9t.github.io/RyuKakuta.github.io/articles/evidential_bert_part2/">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+:root{
+  --bg:#f9f7f2;
+  --bg2:#f0ede4;
+  --bg3:#e4e0d4;
+  --bg4:#d8d3c5;
+  --line:rgba(26,25,22,0.12);
+  --line2:rgba(26,25,22,0.22);
+  --tx:#1a1916;
+  --tx2:#3d3d3a;
+  --tx3:#6b6b66;
+  --tx4:#9c9a92;
+
+  --amber:#b87314;
+  --amber-d:#fdf3e0;
+  --amber-t:#7a4a00;
+
+  --cyan:#0f6e56;
+  --cyan-d:#e1f5ee;
+  --cyan-t:#085041;
+
+  --rose:#a03020;
+  --rose-d:#faece7;
+  --rose-t:#712b13;
+
+  --sage:#3b6d11;
+  --sage-d:#eaf3de;
+  --sage-t:#27500a;
+
+  --violet:#534ab7;
+  --violet-d:#eeedfe;
+  --violet-t:#3c3489;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+  font-family:'IBM Plex Sans',system-ui,sans-serif;
+  background:var(--bg);
+  color:var(--tx2);
+  font-size:15.5px;
+  line-height:1.78;
+  max-width:880px;
+  margin:0 auto;
+  padding:3.5rem 2rem 7rem;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ── HEADER ── */
+.masthead{border-bottom:1px solid var(--line2);padding-bottom:2.25rem;margin-bottom:3rem}
+.eyebrow{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:0.7rem;letter-spacing:0.16em;text-transform:uppercase;
+  color:var(--amber);margin-bottom:1.1rem;display:flex;align-items:center;gap:10px;
+}
+.eyebrow::after{content:'';flex:1;height:1px;background:linear-gradient(to right,var(--amber),transparent);opacity:0.45}
+h1{
+  font-family:'Newsreader',Georgia,serif;
+  font-size:2.75rem;line-height:1.1;font-weight:400;color:var(--tx);
+  letter-spacing:-0.015em;
+}
+h1 em{font-style:italic;color:var(--amber-t)}
+.standfirst{
+  font-family:'Newsreader',serif;font-size:1.12rem;line-height:1.6;
+  color:var(--tx3);margin-top:1rem;max-width:680px;font-weight:300;
+}
+.byline{
+  font-family:'IBM Plex Mono',monospace;font-size:0.7rem;color:var(--tx4);
+  margin-top:1.75rem;padding-top:1rem;border-top:1px solid var(--line);
+  display:flex;gap:1.5rem;flex-wrap:wrap;
+}
+.byline span{white-space:nowrap}
+
+.site-back{
+  position:fixed;top:0;right:0;z-index:30;
+  font-family:'IBM Plex Sans',sans-serif;font-size:12px;
+  margin:0;padding:0.65rem 1rem;
+}
+.site-back a{
+  color:var(--tx4);text-decoration:none;border-bottom:none;
+}
+.site-back a:hover{color:var(--amber)}
+
+/* ── TYPE ── */
+h2{
+  font-family:'Newsreader',serif;font-size:1.75rem;line-height:1.25;
+  font-weight:400;color:var(--tx);margin:3.5rem 0 0.4rem;letter-spacing:-0.01em;
+}
+h3{
+  font-family:'IBM Plex Mono',monospace;font-size:0.7rem;
+  letter-spacing:0.15em;text-transform:uppercase;color:var(--tx4);
+  margin-top:3.25rem;margin-bottom:0.35rem;
+}
+h4{
+  font-family:'IBM Plex Sans',sans-serif;font-size:1.02rem;font-weight:600;
+  color:var(--tx);margin:2rem 0 0.4rem;
+}
+p{margin-bottom:1.15rem}
+strong{color:var(--tx);font-weight:600}
+em{font-style:italic}
+a{color:var(--cyan-t);text-decoration:none;border-bottom:1px solid rgba(15,110,86,0.3)}
+
+code{
+  font-family:'IBM Plex Mono',monospace;font-size:0.85em;
+  background:var(--bg3);color:var(--amber-t);
+  padding:1.5px 5px;border-radius:3px;border:1px solid var(--line);
+}
+
+/* ── DROPCAP ── */
+.lede::first-letter{
+  font-family:'Newsreader',serif;float:left;font-size:3.6rem;line-height:0.82;
+  padding:0.1rem 0.7rem 0 0;color:var(--amber);font-weight:400;
+}
+
+/* ── CODE BLOCK ── */
+pre{
+  background:var(--bg2);border:1px solid var(--line);
+  border-left:2px solid var(--amber);border-radius:0 6px 6px 0;
+  padding:1.1rem 1.35rem;margin:1.5rem 0;overflow-x:auto;
+  font-family:'IBM Plex Mono',monospace;font-size:0.79rem;line-height:1.65;
+  color:var(--tx2);
+}
+pre code{background:none;border:none;padding:0;color:inherit;font-size:inherit}
+pre .c{color:var(--tx4);font-style:italic}
+pre .k{color:var(--violet-t)}
+pre .s{color:var(--sage-t)}
+pre .n{color:var(--cyan-t)}
+pre .f{color:var(--amber-t)}
+.code-cap{
+  font-family:'IBM Plex Mono',monospace;font-size:0.68rem;color:var(--tx4);
+  margin:-1.15rem 0 1.6rem 0;padding-left:1.35rem;letter-spacing:0.02em;
+}
+
+/* ── CALLOUTS ── */
+.box{
+  border-radius:6px;padding:1.1rem 1.35rem;margin:1.75rem 0;
+  border:1px solid;border-left-width:2px;
+}
+.box .lbl{
+  font-family:'IBM Plex Mono',monospace;font-size:0.65rem;letter-spacing:0.14em;
+  text-transform:uppercase;margin-bottom:0.45rem;display:block;
+}
+.box p{margin-bottom:0.6rem;font-size:0.93rem}
+.box p:last-child{margin-bottom:0}
+
+.box.problem{background:var(--rose-d);border-color:rgba(160,48,32,0.28);border-left-color:var(--rose)}
+.box.problem .lbl{color:var(--rose)}
+.box.fix{background:var(--sage-d);border-color:rgba(59,109,17,0.28);border-left-color:var(--sage)}
+.box.fix .lbl{color:var(--sage)}
+.box.insight{background:var(--cyan-d);border-color:rgba(15,110,86,0.3);border-left-color:var(--cyan)}
+.box.insight .lbl{color:var(--cyan)}
+.box.note{background:var(--violet-d);border-color:rgba(83,74,183,0.28);border-left-color:var(--violet)}
+.box.note .lbl{color:var(--violet)}
+
+/* ── PULLQUOTE ── */
+.pull{
+  font-family:'Newsreader',serif;font-size:1.4rem;line-height:1.4;font-style:italic;
+  color:var(--tx);border-top:1px solid var(--line2);border-bottom:1px solid var(--line);
+  padding:1.75rem 0;margin:2.75rem 0;
+}
+
+/* ── TABLE ── */
+table{width:100%;border-collapse:collapse;margin:1.5rem 0;font-size:0.86rem}
+th{
+  text-align:left;padding:9px 12px;border-bottom:1px solid var(--line2);
+  font-family:'IBM Plex Mono',monospace;font-size:0.66rem;letter-spacing:0.1em;
+  text-transform:uppercase;color:var(--tx4);font-weight:400;
+}
+td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top;color:var(--tx2)}
+tr:hover td{background:var(--bg2)}
+td.mono{font-family:'IBM Plex Mono',monospace;font-size:0.8rem;color:var(--tx3)}
+td.head{color:var(--tx);font-weight:500}
+
+.tag{
+  display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:0.66rem;
+  padding:2px 7px;border-radius:3px;letter-spacing:0.04em;white-space:nowrap;
+}
+.tag.a{background:var(--amber-d);color:var(--amber-t);border:1px solid rgba(184,115,20,0.3)}
+.tag.c{background:var(--cyan-d);color:var(--cyan-t);border:1px solid rgba(15,110,86,0.3)}
+.tag.r{background:var(--rose-d);color:var(--rose-t);border:1px solid rgba(160,48,32,0.3)}
+.tag.g{background:var(--sage-d);color:var(--sage-t);border:1px solid rgba(59,109,17,0.3)}
+
+/* ── PHASE TIMELINE ── */
+.phases{margin:1.75rem 0;border-left:1px solid var(--line2);padding-left:0}
+.ph{position:relative;padding:0 0 1.5rem 1.75rem}
+.ph::before{
+  content:'';position:absolute;left:-4.5px;top:8px;width:8px;height:8px;
+  border-radius:50%;background:var(--bg);border:1.5px solid var(--amber);
+}
+.ph.done::before{background:var(--amber)}
+.ph.future::before{border-color:var(--tx4)}
+.ph-name{
+  font-family:'IBM Plex Mono',monospace;font-size:0.7rem;letter-spacing:0.1em;
+  text-transform:uppercase;color:var(--amber);margin-bottom:0.15rem;
+}
+.ph.future .ph-name{color:var(--tx4)}
+.ph-title{color:var(--tx);font-weight:500;font-size:0.98rem;margin-bottom:0.2rem}
+.ph-body{font-size:0.89rem;color:var(--tx3)}
+.ph-gate{
+  font-family:'IBM Plex Mono',monospace;font-size:0.74rem;color:var(--sage-t);
+  margin-top:0.4rem;padding:5px 10px;background:var(--bg2);
+  border-radius:4px;border:1px solid var(--line);display:inline-block;
+}
+
+/* ── EQUATION ── */
+.eq{
+  background:var(--bg2);border:1px solid var(--line);border-radius:6px;
+  padding:1.1rem 1.4rem;margin:1.4rem 0;text-align:center;
+  font-family:'IBM Plex Mono',monospace;font-size:0.9rem;color:var(--tx);
+  line-height:2;
+}
+.eq .an{display:block;font-size:0.72rem;color:var(--tx4);margin-top:0.5rem;font-style:normal;text-align:center}
+
+hr.div{border:none;border-top:1px solid var(--line);margin:3.5rem 0}
+
+.footer{
+  font-size:0.78rem;color:var(--tx4);margin-top:4rem;padding-top:1.25rem;
+  border-top:1px solid var(--line);line-height:1.7;
+}
+
+@media(max-width:640px){
+  body{padding:1.5rem 1.15rem 4rem;font-size:15px}
+  h1{font-size:1.9rem}
+  h2{font-size:1.4rem}
+  .byline{gap:0.75rem;font-size:0.66rem}
+}
+</style>
+</head>
+<body>
+
+<p class="site-back"><a href="/RyuKakuta.github.io/">← Ryu Kakuta</a></p>
+
+<div class="masthead">
+  <div class="eyebrow">Implementation Report · Milestone 1.5</div>
+  <h1>Evidential BERT on CLINC150, part 2: measuring whether the <em>density term</em> earns its place</h1>
+  <p class="standfirst">The density term turned out to be active and harmful. Before changing the method, I rebuilt the evaluation so the next answer — positive or negative — would be one I could defend.</p>
+  <div class="byline">
+    <span>Task: 150-way intent classification + OOS rejection</span>
+    <span>Encoder: bert-base-uncased</span>
+    <span>Arms: CE / EDL / DAEDL (post hoc)</span>
+    <span>Scope: eight analyses before the write-up</span>
+  </div>
+</div>
+
+
+<p class="lede">Milestone 1 ended with a result that did not fit either of the stories I had prepared. The story I feared was the CIFAR one: a density term that runs, produces numbers, and changes nothing. The story I hoped for was a density term that lifts out-of-scope detection. CLINC150 delivered a third: the density term was demonstrably <em>active</em> — it moved evidence mass on in-distribution inputs by a median of 80% — and it made detection <em>worse</em>, from an AUROC of 0.9763 for plain EDL vacuity to 0.9713 for DAEDL.</p>
+
+<p>A result like that invites two bad responses. One is to start tuning the method until the number turns around. The other is to write it up as a negative result on the strength of a single configuration and a seed standard deviation. Both skip the question that actually matters: <em>is this difference real, and if so, where does it come from?</em></p>
+
+<p>This report covers the eight pieces of instrumentation built to answer that question. None of them changes the model. All of them change what I am allowed to claim. The real runs come next; what follows is the machinery, the reasoning behind each design choice, and the decision each output will drive.</p>
+
+
+<h3>Framing</h3>
+<h2>The diagnosis that set the agenda</h2>
+
+<p>An audit of the Milestone 1 code and results produced four findings, and each one became a requirement for the next round.</p>
+
+<p><strong>The density estimate is not what fails.</strong> Tied-covariance Mahalanobis on the bottleneck features reaches an OOS AUROC of 0.974 with a plain CE model, in line with the 97.3 that Podolskiy et al. report for BERT-base on this dataset. Raw density separates validation OOS at roughly 0.97–0.98. Whatever goes wrong happens after the density is computed, in the step that couples it to the evidence.</p>
+
+<p><strong>EDL vacuity is the energy score in disguise.</strong> Under the EXP parameterization, <code>α₀ = Σ exp(clip(z)) + Kε</code>, so vacuity <code>K/α₀</code> is a strictly decreasing function of the log-sum-exp of the clipped logits. It ranks every input exactly as the energy score does. The Milestone 1 headline — EDL vacuity 0.9763 beats CE MSP 0.9655 — therefore compares two scoring rules, not two training objectives. Matched on the score, CE with energy (0.979) sits slightly <em>above</em> EDL vacuity.</p>
+
+<p><strong>DAEDL's rule is a temperature, and it cannot flip predictions.</strong> I had written that the multiplicative rule <code>α = exp(z ⊙ p̂)</code> "can change the prediction." For a scalar <code>p̂ &gt; 0</code> the largest entry of <code>p̂·z</code> is the largest entry of <code>z</code>; the rule is softmax at temperature <code>1/p̂</code>, which is DAEDL's own Theorem 4.3. Flips occur only when clipping sets <code>p̂</code> to exactly 0 and every α ties. My log-additive alternative, by contrast, turns out to be an exact fusion rule:</p>
+
+<div class="eq">
+log vac<sub>add_log</sub>(x) = log K + E<sub>clip</sub>(x) + λ · (1 − p̂(x))
+<span class="an">The log-additive rule is energy plus a weighted density penalty: score fusion with an evidential reading, and a predictive mean that never moves.</span>
+</div>
+
+<p><strong>The materiality gate looked at the wrong pairs.</strong> It compared plain and density-scaled evidence on in-distribution data only. AUROC depends only on how ID inputs are ordered against OOS inputs, so a gate that never sees an OOS input can call a perfect density term INERT (it leaves ID evidence alone) and an uninformative one ACTIVE (it shuffles ID evidence at random). Both happened in a synthetic check.</p>
+
+<p>Two further problems were purely statistical. The DAEDL runs had each retrained their own EDL model, so "DAEDL versus EDL" compared different weights. And the reported ± values were seed standard deviations of 0.0005–0.0009, while every seed is scored on the same 1,000 OOS utterances, whose own sampling error is about 0.0034.</p>
+
+<div class="box insight">
+  <span class="lbl">The lesson</span>
+  <p>A negative result is only worth publishing if it survives the same scrutiny a positive one would. That meant comparing on the same weights, on matched scores, with an audit that looks at ID–OOS pairs, and with uncertainty that reflects a shared test set.</p>
+</div>
+
+
+<h3>Bottleneck I</h3>
+<h2>Decoupling evaluation from training</h2>
+
+<p>Every question above is a question about scores, not about weights. Yet the Milestone 1 harness could answer each one only by training a BERT model from scratch, because <code>run_experiment.py</code> evaluated in-process and kept nothing afterwards: no checkpoints, no logits, no features.</p>
+
+<p>The fix is to separate the two concerns. Each run now finishes with one extra evaluation pass per split and writes what every later analysis needs: logits (N × 150), the 256-d bottleneck features, labels, and optionally the pooled 768-d <code>[CLS]</code> vector from before the bottleneck. About 39 MB per run, plus 73 MB for the pooled vectors.</p>
+
+<pre><code><span class="k">if</span> save_cache_arrays:  <span class="c"># one more eval pass per split, then everything is post hoc</span>
+    loaders_by_split = <span class="f">dict</span>(<span class="f">zip</span>(SPLITS, (tr_eval, va, te, ova, ote)))
+    arrays = {s: <span class="f">extract_split</span>(model, ld, cfg.device, with_pooled=save_pooled)
+              <span class="k">for</span> s, ld <span class="k">in</span> loaders_by_split.items()}
+    <span class="f">save_cache</span>(cfg.output_dir, arrays, meta={<span class="s">"arm"</span>: cfg.arm, <span class="s">"seed"</span>: cfg.seed, ...})</code></pre>
+<p class="code-cap">scripts/run_experiment.py — the cache block. Every DAEDL variant is now a function of a cached EDL run, so DAEDL and EDL are always compared on the same weights.</p>
+
+<p>The consequence is a change in what an experiment costs. Training is reduced to two passes: CE and EDL for five seeds, then six ablation runs. Every coupling rule, normalizer, density model and statistical test afterwards runs on CPU in seconds to minutes.</p>
+
+<div class="box problem">
+  <span class="lbl">A bug the cache exposed</span>
+  <p>Writing the extraction code meant asking which training examples the density model had actually seen. The answer was not all of them. The GDA fit read features through the training loader, which shuffles with <code>drop_last=True</code>; at batch size 32 that silently leaves 24 random utterances out of every fit, and a different 24 each time.</p>
+  <p>The fit now reads all 15,000 in file order. The effect on any single AUROC is tiny, but it was a source of irreproducibility that no test would have caught, because nothing about it is wrong in any one run.</p>
+</div>
+
+<p><strong>The check that the cache tells the truth.</strong> A cached run must reproduce the numbers its own training process reported. The score-table script recomputes every AUROC from the cache and compares it with <code>results.json</code>. Scores built from log-sum-exp (energy, vacuity, Mahalanobis) must agree to numerical noise; in the end-to-end test they agreed to 1e-16.</p>
+
+
+<h3>Bottleneck II</h3>
+<h2>Comparing like with like</h2>
+
+<p>The CE-versus-EDL comparison in Milestone 1 paired each arm with its "natural" score: maximum softmax probability for CE, vacuity for EDL. Once vacuity is known to be the clipped energy score, that pairing is no longer a fair test of the training objective. The fix is a score-matched table: every arm gets every score it supports.</p>
+
+<table>
+  <thead><tr><th>Score</th><th>CE</th><th>EDL</th></tr></thead>
+  <tbody>
+    <tr><td class="head">MSP</td><td>yes</td><td>yes</td></tr>
+    <tr><td class="head">Energy (clipped for EDL)</td><td>yes</td><td>yes</td></tr>
+    <tr><td class="head">Mahalanobis on the bottleneck</td><td>yes</td><td>yes</td></tr>
+    <tr><td class="head">Vacuity, −α₀</td><td>—</td><td>yes, ranks identically to the EDL energy row</td></tr>
+  </tbody>
+</table>
+
+<p>The identity gets a runtime check as well as a unit test. For every EDL run, the script verifies that the Spearman correlation between vacuity and clipped energy is exactly 1 and that their AUROCs agree to the last digit. It also reports how often the largest logit reaches the clamp at 15: above that value all inputs share the same evidence ceiling, and vacuity can no longer separate them.</p>
+
+<div class="box note">
+  <span class="lbl">Why this matters beyond bookkeeping</span>
+  <p>If CE with energy matches or beats EDL with vacuity, the evidential training objective contributes nothing to OOS detection in this setting. That would not sink the project, but it would move the contribution away from "EDL works for intent detection" and toward what the density analysis reveals. It is better to know which paper this is before writing it.</p>
+</div>
+
+
+<h3>The breakthrough</h3>
+<h2>An audit that looks at the right pairs</h2>
+
+<p>The materiality gate was the methodological centerpiece of Milestone 1, and it needed rebuilding more than anything else. The idea survives intact: a pre-registered, automatic test of whether a post-hoc module did anything, with the power to veto a configuration. What changes is the object it inspects.</p>
+
+<p>AUROC is the probability that a random OOS input scores above a random ID input, so everything it measures lives in ID–OOS pairs. Give each pair a credit <code>c = 1</code> if the OOS input scores higher, ½ on a tie, 0 otherwise. Comparing the plain score (<code>c₀</code>) with the density-modified one (<code>c₁</code>) pair by pair yields an exact decomposition:</p>
+
+<div class="eq">
+ΔAUROC = mean(c₁ − c₀) = fixed − broken &nbsp;&nbsp;·&nbsp;&nbsp; flip rate = mean|c₁ − c₀| = fixed + broken
+<span class="an">The flip rate measures whether the module does anything; the net term measures whether what it does helps. Exact, ties included.</span>
+</div>
+
+<p>The two quantities answer different questions, and the gate now gives two verdicts.</p>
+
+<table>
+  <thead><tr><th>Verdict</th><th>Rule</th><th>What it means</th></tr></thead>
+  <tbody>
+    <tr><td><span class="tag a">INERT</span></td><td class="mono">flip rate &lt; 0.001</td><td>fewer than 0.1% of pairs reorder, so AUROC cannot move by more than 0.001</td></tr>
+    <tr><td><span class="tag c">ACTIVE</span></td><td class="mono">otherwise</td><td>the module changes the ranking</td></tr>
+    <tr><td><span class="tag g">USEFUL</span> / <span class="tag r">HARMFUL</span></td><td class="mono">95% CI of ΔAUROC &gt; 0 / &lt; 0</td><td>the reordering helps / hurts beyond test-set noise</td></tr>
+    <tr><td><span class="tag c">NEUTRAL</span></td><td class="mono">CI inside ±0.001</td><td>active, but the fixes and breaks cancel</td></tr>
+  </tbody>
+</table>
+
+<p>The decomposition is exact, including ties, and it is pinned by a unit test. On the synthetic counterexamples that broke the old gate, it gets both right: the perfect density term reorders many pairs and fixes them, the random one reorders as many and breaks them.</p>
+
+<h4>A grid with its rule written down first</h4>
+
+<p>With the gate in place, the coupling question can be asked properly: three normalizers (min-max, quantile-sigmoid, ECDF) crossed with the multiplicative rule and the log-additive rule at λ ∈ {1, 2, 5, 10}, fifteen configurations per run, all computed post hoc on the same cached EDL weights through the repo's own <code>NORMALIZERS</code> and <code>scale_alpha</code>. The selection rule is fixed before any number is seen:</p>
+
+<div class="box fix">
+  <span class="lbl">Pre-registered selection rule</span>
+  <p>1. Drop configurations that are INERT on validation in at least half the seeds.</p>
+  <p>2. Pick the highest mean validation AUROC.</p>
+  <p>3. If the chosen λ sits on the edge of the grid, extend the grid and rerun.</p>
+</div>
+
+<p>Validation holds only 100 OOS utterances, an AUROC standard error of about 0.011, and every seed shares them. Close configurations will be separated mostly by noise, so the selection is treated as coarse and every configuration's test result goes into the appendix, where a reader can see whether the winner was luck.</p>
+
+<p>The grid also closes a reporting gap. DAEDL's multiplicative rule changes the predictive distribution, but the harness reported the DAEDL arm's calibration from the plain logits. Each configuration now reports the ECE of its own density-scaled predictive mean.</p>
+
+
+<h3>Bounds and uncertainty</h3>
+<h2>How much could any combination gain, and is the difference real?</h2>
+
+<p><strong>Complementarity first.</strong> Before blaming a coupling rule for failing to combine two signals, it is worth asking whether the signals are complementary at all. Two numbers settle most of it: the rank correlation between energy and Mahalanobis density, measured separately within ID and within OOS inputs, and the best AUROC any linear combination of the two can reach.</p>
+
+<p>The second number has a clean form. AUROC ignores scale, so every linear rule <code>a·E + b·D</code> is just a direction on the circle. Sweeping 720 directions gives two values: the direction chosen on validation, scored on test, which is an honest result; and the best direction on test, which is a ceiling no linear rule can exceed. The log-additive rule is itself a one-parameter slice of this family, so sweeping λ traces every possible <code>add_log</code> result for a given normalizer.</p>
+
+<p>That comparison is diagnostic. If the linear ceiling barely beats the better of the two signals, no coupling rule can help and the negative result becomes structural. If the linear ceiling clears both but the <code>add_log</code> ceiling does not, the normalizer is throwing information away.</p>
+
+<p>On the synthetic test bed used to check the code, that is exactly what happened: min-max and ECDF capped <code>add_log</code> at 0.92–0.93 against 0.98 for density alone. Both map everything outside the training range to a single value, and the training range's edge is precisely where OOS inputs sit. Whether real CLINC150 features behave the same way is one of the first things the new runs will show.</p>
+
+<p><strong>Then uncertainty that respects a shared test set.</strong> Every seed is scored on the same 1,000 OOS utterances. Seed-to-seed spread therefore measures training noise only, while the larger uncertainty, which utterances happened to land in the test set, is invisible to it. The replacement is a paired, stratified bootstrap over utterances:</p>
+
+<div class="phases">
+  <div class="ph done"><div class="ph-name">Resample</div><div class="ph-body">Each replicate redraws the 4,500 ID and 1,000 OOS test utterances with replacement.</div></div>
+  <div class="ph done"><div class="ph-name">Pair</div><div class="ph-body">The same draw is applied to both scores being compared, and to every seed.</div></div>
+  <div class="ph done"><div class="ph-name">Report</div><div class="ph-body">The statistic is the seed-mean difference in AUROC, with a 95% interval.</div></div>
+</div>
+
+<p>Pairing is what makes the intervals tight enough to be useful. Two scores from the same model largely agree on which utterances are hard, so most of the sampling error cancels in their difference. Resampling is cheap because scores are sorted once and each replicate only reweights them; 5,000 replicates take seconds.</p>
+
+<p>The comparisons are fixed in advance: the selected coupling against plain vacuity and against density alone, the Milestone 1 DAEDL configuration against vacuity, CE energy against EDL vacuity, and the two baselines' margins over MSP. The rule for the write-up is equally fixed: "A beats B" only when the interval excludes zero.</p>
+
+
+<h3>Ablations</h3>
+<h2>Every design choice, tested rather than argued</h2>
+
+<p>Milestone 1 justified its density pipeline with arguments: PCA to tame anisotropy, whitening to equalize directions, spectral normalization for distance awareness. Some of those arguments do not survive a closer look. Whitening is a mathematical no-op for a Mahalanobis distance whose covariance is re-estimated after the map. A linear map from 768 to 256 dimensions has a null space of at least 512 dimensions, so spectral normalization on it cannot make the features bi-Lipschitz. The replacement for argument is measurement.</p>
+
+<p><strong>The density model.</strong> On cached features, at no training cost, the harness sweeps PCA at none, 128 and 64 dimensions, on the bottleneck and on the pooled 768-d vector, and adds three near-OOD Mahalanobis variants from the literature:</p>
+
+<table>
+  <thead><tr><th>Variant</th><th>Source</th><th>Question it answers</th></tr></thead>
+  <tbody>
+    <tr><td class="head">Relative Mahalanobis</td><td class="mono">Ren et al. 2021</td><td>Does subtracting a class-agnostic background distance help on near-OOD?</td></tr>
+    <tr><td class="head">Mahalanobis++</td><td class="mono">Müller &amp; Hein 2025</td><td>Do feature-norm differences distort the Gaussian assumption?</td></tr>
+    <tr><td class="head">Partial Mahalanobis, top vs. bottom directions</td><td class="mono">Kamoi &amp; Kobayashi 2020</td><td>Is the OOS signal in the low-variance directions that PCA discards?</td></tr>
+  </tbody>
+</table>
+
+<p>The spectrum report adds two facts the PCA argument needs: how anisotropic the features actually are after fine-tuning, and what share of the between-class variance the top 128 components keep (150 classes span up to 149 directions).</p>
+
+<p>One more check targets the normalizer. Training features of a fine-tuned encoder are denser than unseen ID features, so a normalizer fit on training log-densities may run systematically low on test. The harness compares a fit on training data with a cross-fitted fit on ID validation. On the synthetic test bed the effect was large: median test <code>p̂</code> of 0.58–0.68 under the training fit against 0.87–0.88 under the validation fit.</p>
+
+<div class="box note">
+  <span class="lbl">An engineering note</span>
+  <p>The ablation sweep at real size was too slow at first: the Gaussian model computed tied-covariance distances with one triangular solve per class, 150 of them at up to 768 dimensions. Rewriting it as one solve plus one matrix product made it 25–70× faster with results identical to 1e-15, pinned by a test against the original loop.</p>
+</div>
+
+<p><strong>The training choices.</strong> Two ablations need new runs, three seeds each. One turns spectral normalization off, which decides whether SN stays on the contribution list. The other trains with the official DAEDL loss (expected squared error under the Dirichlet, constant KL weight 5×10⁻²) in place of the digamma loss my port uses. Both are scored with the configuration the grid selected, never re-selected. On the synthetic test bed, the official loss with its constant KL weight trained much worse (test accuracy 0.57–0.71 against 0.92–0.96). If BERT loses more than 1.5 points, one more arm changes only the loss, so the loss and the regularizer are not confounded.</p>
+
+<p><strong>CIFAR, revisited from the OOD side.</strong> The claim that the CIFAR density term was inert rested on ID-only evidence. A two-phase script now extracts arrays from the replication's checkpoint once, then measures AUROC on SVHN and CIFAR-100 with and without density, runs the pair-flip gate, and traces the two prediction flips (the expectation: inputs whose clipped <code>p̂</code> is exactly 0, so every α ties).</p>
+
+<div class="box insight">
+  <span class="lbl">A new hypothesis</span>
+  <p>The official density fit reads the <em>augmented</em> training loader, twice: once to fit and once to score. Augmented outliers may be what produced the training log-density minimum of −8,155 against a 5th percentile of 659, the tail that squeezed min-max. Refitting on un-augmented images settles it.</p>
+</div>
+
+
+<h3>Hygiene</h3>
+<h2>Verifying the instrument before trusting the reading</h2>
+
+<p>A harness built to catch silent failures has to be held to its own standard. Three layers of checks ran before any real experiment.</p>
+
+<p><strong>Identities as unit tests.</strong> Eighteen new tests pin the statements the paper will lean on: the fast AUROC equals scikit-learn's, with and without ties; the reweighted bootstrap AUROC equals AUROC on actually resampled arrays; the pair-flip decomposition is exact; vacuity ranks like the clipped energy; <code>add_log</code> equals energy plus <code>λ(1 − p̂)</code> and leaves the predictive mean untouched; <code>mul</code> never changes argmax while <code>p̂ &gt; 0</code>; the default loss reproduces the loss every earlier run used.</p>
+
+<p><strong>An end-to-end run on a model small enough to train in minutes.</strong> A two-layer BERT built locally, a synthetic twelve-intent dataset with near-OOS utterances that borrow words from two intents, and the full pipeline: training with caching for CE and EDL over three seeds, both ablations, then every analysis script and the aggregator. The checks that matter held on real cached runs: vacuity and clipped energy agreed with Spearman correlation 1 in every EDL run, and the cache reproduced each run's own reported AUROCs to 1e-16.</p>
+
+<p><strong>Timing at real size.</strong> Synthetic caches with CLINC150's exact shapes (15,000 / 3,000 / 4,500 / 100 / 1,000 utterances, 150 classes, 256-d and 768-d features) put the cost of the analyses at about six minutes for the score table, grid, complementarity and bootstrap across ten runs, plus about fifteen for the density ablations.</p>
+
+<div class="box problem">
+  <span class="lbl">What was not tested</span>
+  <p>The CIFAR extraction phase ran against a stub with the official DAEDL interface, because the checkpoint and images live on another machine. It is the one component whose first real run is also its first test.</p>
+</div>
+
+
+<h3>Process</h3>
+<h2>Run order, and what each outcome would mean</h2>
+
+<p>The order is short. Retrain CE and EDL once with caching, five seeds each. Run the score table, the grid, the complementarity analysis and the bootstrap. Then the density ablations, the two training ablations, and the CIFAR check. Only the two training passes need the GPU.</p>
+
+<div class="phases">
+  <div class="ph"><div class="ph-name">Train · pass 1</div><div class="ph-title">CE and EDL, five seeds, with caches</div><div class="ph-body">The only expensive step everything else depends on.</div><div class="ph-gate">gate: cache reproduces each run's results.json</div></div>
+  <div class="ph"><div class="ph-name">Post hoc · CPU</div><div class="ph-title">Score table, coupling grid, complementarity, bootstrap</div><div class="ph-body">About six minutes for ten runs.</div><div class="ph-gate">gate: selection made on validation before test is read</div></div>
+  <div class="ph"><div class="ph-name">Post hoc · CPU</div><div class="ph-title">Density ablations</div><div class="ph-body">PCA, feature space, Mahalanobis variants, normalizer fit source.</div></div>
+  <div class="ph future"><div class="ph-name">Train · pass 2</div><div class="ph-title">SN off and the official MSE loss, three seeds each</div><div class="ph-body">Scored with the already-selected configuration.</div></div>
+  <div class="ph future"><div class="ph-name">CIFAR</div><div class="ph-title">OOD-side check of the replication</div><div class="ph-body">Extract once, analyse on CPU.</div></div>
+</div>
+
+<p>As in Milestone 1, the useful discipline is deciding in advance what each outcome means, so the results cannot be read to fit a story afterwards.</p>
+
+<table>
+  <thead><tr><th>Outcome</th><th>What it means for the paper</th></tr></thead>
+  <tbody>
+    <tr><td class="head">CE + energy ≥ EDL vacuity</td><td>EDL training adds nothing for OOS here; the contribution moves to the density analysis</td></tr>
+    <tr><td class="head">Linear-fusion ceiling ≈ better single signal</td><td>Energy and density are redundant; no coupling can help; the negative result is structural</td></tr>
+    <tr><td class="head">Ceiling well above both, <code>add_log</code> ceiling not</td><td>The normalizer is the bottleneck; report which ones saturate and why</td></tr>
+    <tr><td class="head">Selected coupling beats vacuity and density alone, CI excludes 0</td><td>A positive result: a mean-preserving coupling that improves on its better ingredient</td></tr>
+    <tr><td class="head">PCA none beats 128</td><td>Drop PCA from the method; anisotropy was not the problem it was argued to be</td></tr>
+    <tr><td class="head">SN off within noise of SN on</td><td>Remove spectral normalization from the contribution list</td></tr>
+    <tr><td class="head">Coupling helps only under the official MSE loss</td><td>The negative result is specific to the port's loss and must be stated that way</td></tr>
+    <tr><td class="head">Un-augmented CIFAR fit removes the heavy tail</td><td>The CIFAR "inert" result is partly an augmentation artifact of the reference pipeline</td></tr>
+  </tbody>
+</table>
+
+<div class="box fix">
+  <span class="lbl">The kill branch carries over</span>
+  <p>If the density coupling never clears the bootstrap, it is written up as a diagnosed negative, now with a mechanism, an upper bound, and intervals instead of a single seed-std comparison.</p>
+</div>
+
+<hr class="div">
+
+<h3>Synthesis</h3>
+<h2>What this connects to</h2>
+
+<p>The Milestone 1 article ended by reading the materiality gate as a direct test of Shen et al.'s critique: if EDL's uncertainty is really an energy-based OOD detector, then one should ask of every EDL result whether a reported gain is real or the underlying detector under another name. This round makes that reading literal. Vacuity is not <em>like</em> the energy score; under the EXP parameterization it <em>is</em> the energy score, up to a monotone map. DAEDL's coupling is a temperature on it. My own alternative is a weighted sum of energy and density. Once each component is written in its plainest form, the evaluation can ask the right questions: does the density add anything energy lacks, and does a given rule extract it?</p>
+
+<p class="pull">The CIFAR replication taught me to check whether a module was doing anything. CLINC150 taught me to check what it was doing, on which pairs, and with how much certainty.</p>
+
+<p>The broader lesson is about where effort goes in uncertainty work. Every component built here is unglamorous: a cache, a score table, a pair-level audit, a bootstrap, a sweep of ablations. None of it can make the method look better. All of it narrows what the method can be claimed to do, and that is what makes the eventual claim, positive or negative, worth reading.</p>
+
+<p class="footer">
+Primary sources: Yoon &amp; Kim, "Uncertainty Estimation by Density Aware Evidential Deep Learning" (ICML 2024) · Sensoy, Kaplan &amp; Kandemir, "Evidential Deep Learning to Quantify Classification Uncertainty" (NeurIPS 2018) · Shen et al., "Are Uncertainty Quantification Capabilities of Evidential Deep Learning a Mirage?" (NeurIPS 2024) · Lee et al., "A Simple Unified Framework for Detecting Out-of-Distribution Samples and Adversarial Attacks" (NeurIPS 2018) · Podolskiy et al., "Revisiting Mahalanobis Distance for Transformer-Based Out-of-Domain Detection" (AAAI 2021) · Ren et al., "A Simple Fix to Mahalanobis Distance for Improving Near-OOD Detection" (2021) · Müller &amp; Hein, "Mahalanobis++: Improving OOD Detection via Feature Normalization" (ICML 2025) · Kamoi &amp; Kobayashi, "Why is the Mahalanobis Distance Effective for Anomaly Detection?" (2020) · Liu et al., "Simple and Principled Uncertainty Estimation with Deterministic Deep Learning via Distance Awareness" (NeurIPS 2020) · Larson et al., "An Evaluation Dataset for Intent Classification and Out-of-Scope Prediction" (EMNLP 2019). Code: <a href="https://github.com/mid9t/ER-1-Epistemic-Ranker-">ER-1-Epistemic-Ranker-</a>. Previous report: <a href="../evidential_bert_article/">Evidential BERT on CLINC150, Milestone 1</a>.
+</p>
+
+</body>
+</html>
