@@ -1,24 +1,33 @@
 import { ArrowUpRight } from "lucide-react";
-import { formatTechnologies, type Project } from "@/content/portfolio";
+import { formatTechnologies, projectMeta, type Project } from "@/content/portfolio";
 import { SiteLink } from "@/components/site/site-link";
 
 export function FeatureBlock({ project }: { project: Project }) {
+  const href = project.links[0]?.href;
+  if (!href) return null;
+  const eyebrow = projectMeta(project);
+
   return (
     <SiteLink
-      href={project.href}
+      href={href}
       className="feature-block card-link ink"
       ariaLabel={`${project.title} — view on GitHub`}
     >
       <div>
         <p className="flex items-center gap-3 text-label font-semibold text-paper uppercase">
           <span className="size-2.5 shrink-0 bg-accent" aria-hidden="true" />
-          Current project
+          {eyebrow}
         </p>
         <h2 className="mt-4 text-feature font-bold">{project.title}</h2>
         <p className="feature-copy">{project.description}</p>
+        {project.question ? (
+          <p className="mt-4 max-w-[32em] text-small text-on-ink-2">{project.question}</p>
+        ) : null}
       </div>
       <div className="mt-8 flex items-end justify-between gap-4">
-        <p className="min-w-0 pb-6 text-meta text-on-ink-3">{formatTechnologies(project.technologies)}</p>
+        <p className="min-w-0 pb-6 text-meta text-on-ink-3">
+          {formatTechnologies(project.technologies)}
+        </p>
         <span className="feature-square" aria-hidden="true">
           <ArrowUpRight strokeWidth={2} className="absolute right-4 bottom-4 size-8 text-paper" />
         </span>

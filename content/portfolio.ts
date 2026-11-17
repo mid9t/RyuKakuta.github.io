@@ -14,15 +14,30 @@ export type Experience = {
   technologies: string[];
 };
 
+export type ProjectLink = { label: string; href: string };
+
 export type Project = {
   title: string;
-  href: string;
+  links: ProjectLink[];
   description: string;
+  question?: string;
+  short?: string;
   technologies: string[];
-  year: string;
+  statusLabel: string;
   area: string;
-  status?: "in-progress" | "complete";
-  featured?: boolean;
+  tier: "featured" | "selected" | "also";
+};
+
+export type ExternalArticle = {
+  title: string;
+  outlet: string;
+  platform: string;
+  href: string;
+  date: string;
+  summary: string;
+  /** Longer standfirst for the publications-page ink block. */
+  detail?: string;
+  codeHref?: string;
 };
 
 export type Publication = {
@@ -30,6 +45,7 @@ export type Publication = {
   authors: string[];
   venue: string;
   year: number;
+  date: string;
   abstract?: string;
   links: { pdf?: string; arxiv?: string; code?: string };
 };
@@ -37,10 +53,10 @@ export type Publication = {
 export const profile = {
   name: "Ryu Kakuta",
   role: "AI Evaluation Engineer",
-  eyebrow: "AI Evaluation Engineer · Uncertainty Research",
-  headline: "I build evaluations that expose what AI models don't know.",
-  bio: "At Handshake I design RL environments and benchmarks that stress-test frontier agents. My research makes models report their own uncertainty, using density-aware Evidential Deep Learning.",
-  availability: "Open to AI evaluation & reliability roles",
+  eyebrow: "Model Evaluation · AI Safety · Uncertainty",
+  headline: "I test whether a model's signals can be trusted.",
+  bio: "At Handshake I build RL environments and containerized coding tasks that stress-test frontier agents. My research asks three things: is the uncertainty signal real, is the measured gain real, and when should a safety monitor hand off?",
+  availability: "Open to talk AI safety, uncertainty & honest evaluation",
   email: "kakuryu555@gmail.com",
   resumeUrl:
     "https://drive.google.com/file/d/1C9Dhx1d-iXLT55JD-BOZ-fEj9R-vqj1i/view?usp=sharing",
@@ -66,7 +82,7 @@ export const experiences: Experience[] = [
     company: "Handshake",
     href: "https://joinhandshake.com",
     description:
-      "Author containerized coding tasks and scoring gates that stress-test frontier agents.",
+      "RL environments and containerized coding tasks for frontier agents: scoring gates, difficulty calibration (avg@8 ≤ 0.5), and telling task-design failures from harness failures.",
     technologies: [
       "Python",
       "Docker",
@@ -95,55 +111,94 @@ export const experiences: Experience[] = [
   },
 ];
 
-/**
- * Year and area for GeoGenie and the EEG project are provisional until confirmed.
- */
 export const projects: Project[] = [
   {
-    title: "Epic Ranker",
-    href: "https://github.com/mid9t/ER-1-Epistemic-Ranker-",
+    title: "Activation Probes",
+    tier: "featured",
+    statusLabel: "Current build",
+    area: "AI safety",
+    links: [{ label: "GitHub", href: "https://github.com/mid9t/Activation-Monitoring" }],
     description:
-      "An early-exiting ranker that uses evidential uncertainty to stop inference when confidence is high.",
-    technologies: [
-      "Python",
-      "PyTorch",
-      "Model Calibration",
-      "Model Evaluation",
-      "Uncertainty Quantification",
-      "Information Retrieval",
-      "HuggingFace",
-      "Data Streaming",
+      "A two-stage harmful-request monitor. A linear probe on frozen Llama-3-8B-Instruct activations decides about 95% of traffic; Llama Guard 3 takes the uncertain rest within a 5% deferral budget.",
+    question:
+      "Question: do ensemble disagreement and residual-stream density beat the margin baseline on three held-out shifts?",
+    technologies: ["PyTorch", "Llama-3-8B", "Linear Probes", "Llama Guard 3"],
+  },
+  {
+    title: "Skeptic",
+    tier: "selected",
+    statusLabel: "In progress",
+    area: "Agent evaluation",
+    links: [
+      { label: "Repo", href: "https://github.com/Jamestilfords/self-refuting-swarm" },
+      {
+        label: "Slides",
+        href: "https://drive.google.com/file/d/1AcFYQGjtcfUy0MQgPs4nuv7faYg9P0rR/view?usp=sharing",
+      },
     ],
-    year: "2026",
+    description:
+      "Measures false discoveries in agent-driven research loops. One stream of agent-proposed model changes runs through three acceptance rules (keep-if-better, Thresholdout, a statistical critic), with sealed test data and a pre-registered ledger.",
+    technologies: ["Python", "Modal Sandboxes", "Paired Bootstrap", "Holm"],
+  },
+  {
+    title: "ER-1: Epistemic Ranker",
+    tier: "selected",
+    statusLabel: "Finished 2026",
     area: "Uncertainty",
-    status: "in-progress",
-    featured: true,
+    links: [{ label: "GitHub", href: "https://github.com/mid9t/ER-1-Epistemic-Ranker-" }],
+    description:
+      "Does density-aware EDL, ported from vision to BERT, improve out-of-scope detection? No: plain EDL vacuity scored AUROC 0.9763 against 0.9713 for the density variant over 5 seeds, within seed noise.",
+    technologies: ["PyTorch", "EDL", "HuggingFace", "CLINC150"],
   },
   {
-    title: "GeoGenie: Natural-Language Spatial Search",
-    href: "https://github.com/mid9t/GeoGenie",
-    description:
-      "An LLM turns free-text intent into structured spatial queries over hand-built geometric data structures.",
-    technologies: [
-      "Python",
-      "NumPy",
-      "Computational Geometry",
-      "Spatial Indexing",
-      "LLMs",
-      "FastAPI",
-      "Routing",
-    ],
-    year: "2025",
+    title: "GeoGenie",
+    tier: "selected",
+    statusLabel: "",
     area: "Spatial AI",
+    links: [{ label: "GitHub", href: "https://github.com/mid9t/GeoGenie" }],
+    description:
+      "Natural-language spatial search. An LLM turns free-text intent into structured queries over hand-built geometric indexes, benchmarked down to the commit.",
+    technologies: ["Python", "NumPy", "FastAPI", "LLMs"],
   },
   {
-    title: "EEG-Based MDD Classification via Effective Connectivity (CNNs)",
-    href: withBase("/projects/eeg-based-mdd-classification/"),
+    title: "RCA-Demo",
+    tier: "also",
+    statusLabel: "",
+    area: "Applied ML",
+    links: [{ label: "GitHub", href: "https://github.com/mid9t/RCA-Demo" }],
+    short: "root-cause analysis for sales anomalies",
+    description: "Automated root-cause analysis for sales anomalies on synthetic data.",
+    technologies: ["Python", "SHAP", "Statistical Modeling"],
+  },
+  {
+    title: "EEG-based Depression Classification",
+    tier: "also",
+    statusLabel: "",
+    area: "Clinical ML",
+    links: [{ label: "Project page", href: withBase("/projects/eeg-based-mdd-classification/") }],
+    short: "leakage-safe clinical pipeline",
     description:
-      "An end-to-end EEG pipeline for MDD classification, built for evaluation rigor and leakage prevention.",
-    technologies: ["Python", "Convolutional Neural Networks", "Granger Causality"],
-    year: "2024",
-    area: "Clinical signals",
+      "CNNs on effective-connectivity EEG features, built around evaluation rigor and leakage prevention.",
+    technologies: ["Python", "CNNs", "Granger Causality"],
+  },
+];
+
+/**
+ * Date is unknown. Non-ISO values sort ahead of dated pieces until a real
+ * publication date is supplied.
+ */
+export const externalArticles: ExternalArticle[] = [
+  {
+    title: "Does Density Help Out-of-Scope Detection? Auditing DAEDL on BERT",
+    outlet: "Data Science Collective",
+    platform: "Medium",
+    href: "https://medium.com/data-science-collective/does-density-help-out-of-scope-detection-auditing-daedl-on-bert-04fcdb7ac8d4",
+    date: "2026-MM-DD",
+    summary:
+      "The public write-up of ER-1: plain evidential vacuity matched the density-scaled variant, so the density term did not earn its place.",
+    detail:
+      "Density-aware EDL, ported from vision to BERT and tested on CLINC150 over 5 seeds. Plain evidential vacuity scored AUROC 0.9763 against 0.9713 for the density variant, a gap inside seed noise.",
+    codeHref: "https://github.com/mid9t/ER-1-Epistemic-Ranker-",
   },
 ];
 
@@ -151,17 +206,21 @@ export const projects: Project[] = [
 export const publications: Publication[] = [];
 
 export function featuredProject(): Project | undefined {
-  return projects.find((project) => project.featured);
+  return projects.find((project) => project.tier === "featured");
 }
 
-export function selectedProjects(): Project[] {
-  return projects.filter((project) => !project.featured).slice(0, 3);
+export function projectsByTier(tier: Project["tier"]): Project[] {
+  return projects.filter((project) => project.tier === tier);
 }
 
-export function sortedPublications(): Publication[] {
-  return [...publications].sort((a, b) => b.year - a.year || a.title.localeCompare(b.title));
+export function projectMeta(project: Project): string {
+  return [project.statusLabel, project.area].filter(Boolean).join(" · ");
 }
 
 export function formatTechnologies(technologies: string[]): string {
   return technologies.slice(0, 4).join(" · ");
+}
+
+export function publicationHref(publication: Publication): string {
+  return publication.links.pdf ?? publication.links.arxiv ?? publication.links.code ?? "";
 }

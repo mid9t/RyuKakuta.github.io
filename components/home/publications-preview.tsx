@@ -1,14 +1,15 @@
-import { sortedPublications } from "@/content/portfolio";
+import { writingCount, featuredWriting } from "@/content/archive";
 import { articleHref, formatArticleMonth, sortedArticles } from "@/content/articles";
 import { Container } from "@/components/site/container";
 import { SectionTitle } from "@/components/site/section-title";
+import { SiteLink } from "@/components/site/site-link";
 import { Citation } from "@/components/publications/citation";
 import { PaperLinks } from "@/components/publications/paper-links";
 
 export function PublicationsPreview() {
-  const notes = sortedArticles();
-  const [paper] = sortedPublications();
-  const preview = notes.slice(0, 4);
+  const notes = sortedArticles().slice(0, 4);
+  const featured = featuredWriting();
+  const count = writingCount();
 
   return (
     <section id="writing" aria-labelledby="writing-title" className="pt-12 sm:pt-18">
@@ -16,19 +17,43 @@ export function PublicationsPreview() {
         <SectionTitle
           id="writing-title"
           title="Publications & research notes"
-          more={{ label: `All ${notes.length}`, href: "/articles/" }}
+          more={{ label: `All ${count}`, href: "/articles/" }}
         />
-        <div className={paper ? "pub-split" : undefined}>
-          {paper ? (
-            <div className="pt-5">
+        <div className={featured ? "pub-split" : undefined}>
+          {featured?.kind === "paper" ? (
+            <div className="min-w-0 pt-5">
               <p className="text-label font-semibold text-text-3 uppercase">Paper</p>
-              <h3 className="mt-3 text-item font-bold text-ink">{paper.title}</h3>
-              <Citation publication={paper} className="mt-3" />
-              <PaperLinks links={paper.links} className="mt-4" />
+              <h3 className="mt-3 text-item font-bold text-ink">{featured.publication.title}</h3>
+              <Citation publication={featured.publication} className="mt-3" />
+              <PaperLinks links={featured.publication.links} className="mt-4" />
             </div>
           ) : null}
-          <div className={paper ? undefined : "pt-1"}>
-            {preview.map((article, index) => (
+          {featured?.kind === "external" ? (
+            <div className="min-w-0 pt-5">
+              <p className="text-label font-semibold text-text-3 uppercase">
+                Published · {featured.article.outlet}
+              </p>
+              <h3 className="mt-3 text-item font-bold text-ink">{featured.article.title}</h3>
+              <p className="mt-3 text-small text-text-2">{featured.article.summary}</p>
+              <p className="mt-4 flex flex-wrap items-center gap-x-2 text-nav font-semibold">
+                <SiteLink href={featured.article.href} className="text-accent">
+                  Read on {featured.article.platform}
+                </SiteLink>
+                {featured.article.codeHref ? (
+                  <>
+                    <span aria-hidden="true" className="font-normal text-text-3">
+                      /
+                    </span>
+                    <SiteLink href={featured.article.codeHref} className="text-accent">
+                      Code
+                    </SiteLink>
+                  </>
+                ) : null}
+              </p>
+            </div>
+          ) : null}
+          <div className={featured ? undefined : "pt-1"}>
+            {notes.map((article, index) => (
               <a
                 key={article.slug}
                 href={articleHref(article.slug)}
@@ -37,9 +62,7 @@ export function PublicationsPreview() {
                 <time
                   dateTime={article.date}
                   className={
-                    index === 0
-                      ? "text-meta font-semibold text-accent"
-                      : "text-meta text-text-3"
+                    index === 0 ? "text-meta font-semibold text-accent" : "text-meta text-text-3"
                   }
                 >
                   {formatArticleMonth(article.date)}

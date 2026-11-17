@@ -11,8 +11,25 @@ export type Article = {
 
 export const publicationsTitle = "Publications & research notes";
 
-export const publicationsIntro =
-  "One question runs through all of it: can a model's uncertainty be trusted enough to act on? Newest first.";
+const COUNT_WORDS = [
+  "Zero",
+  "One",
+  "Two",
+  "Three",
+  "Four",
+  "Five",
+  "Six",
+  "Seven",
+  "Eight",
+  "Nine",
+  "Ten",
+];
+
+export function publicationsLead(count: number): string {
+  const label = COUNT_WORDS[count] ?? String(count);
+  const pieces = count === 1 ? "piece" : "pieces";
+  return `One question runs through all of it: can a model's uncertainty be trusted enough to act on? ${label} ${pieces}, newest first.`;
+}
 
 /**
  * Single source of truth for the article archive at `/articles/`.
