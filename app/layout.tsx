@@ -1,31 +1,36 @@
-import type { Metadata } from "next";
-import { Inter, Space_Grotesk } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Inter } from "next/font/google";
+import { profile } from "@/content/portfolio";
 import "./globals.css";
 
 const inter = Inter({
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-inter",
   display: "swap",
 });
 
-const spaceGrotesk = Space_Grotesk({
-  subsets: ["latin"],
-  variable: "--font-space-grotesk",
-  display: "swap",
-});
+export const viewport: Viewport = {
+  themeColor: "#FFFFFF",
+};
 
 export const metadata: Metadata = {
-  title: "Ryu Kakuta | AI Evaluation Engineer",
-  description:
-    "AI Evaluation Engineer working on RL environments and model evaluation, with research in density-aware Evidential Deep Learning.",
-  generator: "Next.js",
+  metadataBase: new URL("https://mid9t.github.io"),
+  title: "Ryu Kakuta — AI Evaluation Engineer",
+  description: profile.bio,
+  openGraph: {
+    title: "Ryu Kakuta — AI Evaluation Engineer",
+    description: profile.bio,
+    type: "website",
+    images: [{ url: profile.ogImage, alt: profile.name }],
+  },
 };
 
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable}`}>
+    <html lang="en" className={inter.variable}>
       <body className="font-sans antialiased">{children}</body>
     </html>
   );
